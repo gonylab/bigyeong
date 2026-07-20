@@ -1606,7 +1606,7 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
   <!-- 캔버스 영역 -->
   <div class="map-canvas-wrap" id="mapCanvasWrap">
     <div class="map-canvas" id="mapCanvas">
-      <img src="https://gonylab-image.com/thebgyeong/room/room_set.jpg" alt="단지 배치도" id="mapBgImg"/>
+      <img src="https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/room/room_set.jpg" alt="단지 배치도" id="mapBgImg"/>
       <!-- 마커들 -->
     </div>
   </div>
@@ -2025,7 +2025,7 @@ async function initApp(){
 
   // rbsData 동적 생성
   rooms.forEach(r=>{
-    const imgBase='https://gonylab-image.com/thebgyeong/room/'+(r.SORT_NO||1)+'/';
+    const imgBase='https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/room/'+(r.SORT_NO||1)+'/';
     const roomImgCounts={1:12,2:12,3:12,4:12,5:12,6:12,7:12,8:12,9:8,10:9,11:12,12:12};
     const imgCount=roomImgCounts[+(r.SORT_NO||1)]||12;
     const imgs=Array.from({length:imgCount},(_,k)=>imgBase+(k+1)+'.jpg');
@@ -2164,7 +2164,7 @@ function renderMenuAccordion(){
     const roomNames=cfg.keys.map(k=>rbsData[k]?.ttl||'').filter(Boolean);
     const firstKey=cfg.keys[0];
     const roomNum=rbsData[firstKey]?.imgs?.[0]?.match(/room\/([^/]+)\//)?.[1]||(i+1);
-    const thumb='https://gonylab-image.com/thebgyeong/room/'+roomNum+'/1.jpg';
+    const thumb='https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/room/'+roomNum+'/1.jpg';
     return `
       <div class="menu-type-card" onclick="openRoomTypeOverlay(${i})">
         <img class="menu-type-img" src="${thumb}" alt="${cfg.name}" loading="lazy"/>
@@ -2228,7 +2228,7 @@ function renderHeroSlides(specials){
   const heroItems=[];
   // 스페셜 항목에서 이미지 있는 것
   (specials||[]).forEach((s,i)=>{
-    const img=s.IMAGE_URL||(s.IMG_URL)||('https://gonylab-image.com/thebgyeong/special/'+(i+1)+'/1.jpg');
+    const img=s.IMAGE_URL||(s.IMG_URL)||('https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/'+(i+1)+'/1.jpg');
     heroItems.push({img,title:s.TITLE_KR||'',sub:s.TITLE_EN||'',spIdx:i});
   });
   // 최대 6개
@@ -2272,7 +2272,7 @@ function renderSpecialOverlay(specials){
       const name=s.TITLE_KR||'';
       const en=s.TITLE_EN||'';
       const cnt=spImgCountsForList[i]||1;
-      const base='https://gonylab-image.com/thebgyeong/special/'+(i+1)+'/';
+      const base='https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/'+(i+1)+'/';
       const imgs=Array.from({length:cnt},(_,k)=>base+(k+1)+'.jpg');
       const slideHtml=cnt>1
         ?`<div class="splo-card-slides" id="splo-slides-${i}" data-spidx="${i}" data-total="${cnt}" data-cur="0">
@@ -2364,7 +2364,7 @@ function renderSpecialOverlay(specials){
     const id='slo-item-'+i;
     const spImgCounts=[10,6,7,5,4,7,1,4,3];
     const spImgCount=spImgCounts[i]||1;
-    const spImgBase='https://gonylab-image.com/thebgyeong/special/'+(i+1)+'/';
+    const spImgBase='https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/'+(i+1)+'/';
     const spImgs=Array.from({length:spImgCount},(_,k)=>spImgBase+(k+1)+'.jpg');
     const img=s.IMAGE_URL||s.IMG_URL||spImgs[0];
     const cat=s.TITLE_EN||'';
@@ -2453,7 +2453,7 @@ function renderTravelOverlay(travels){
     const desc=t.CONTENT||'';
     const distance=t.DISTANCE||'';
     // 이미지: 서버에 없으면 지도 아이콘 플레이스홀더 표시
-    const imgUrl=t.IMAGE_URL||('https://gonylab-image.com/thebgyeong/travel/'+(i+1)+'.jpg');
+    const imgUrl=t.IMAGE_URL||('https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/travel/'+(i+1)+'.jpg');
     const imgHtml=`<div class="slo-item-img"><img src="${imgUrl}" alt="${title}" loading="lazy" onerror="this.parentElement.style.display='none'"/></div>`;
     return `
       <div class="slo-item" id="${id}">
@@ -2487,7 +2487,7 @@ function renderTravelOverlay(travels){
 
 /* ===== 갤러리 ===== */
 (function(){
-  var GALLERY_BASE='https://gonylab-image.com/thebgyeong/gallery/';
+  var GALLERY_BASE='https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/gallery/';
   var GALLERY_COUNT=16;
   var _imgs=[];
   var _cur=0;
@@ -2611,14 +2611,14 @@ const bsData={
     tags:['수영장','사우나','키디풀','입실 후 ~ 22:00']
   },
   lounge:{
-    img:'https://gonylab-image.com/thebgyeong/special/5/1.jpg',
+    img:'https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/5/1.jpg',
     cat:'LOUNGE',
     title:'라운지 봄',
     desc:'봄처럼 따뜻하고 포근한 공용 라운지. 로비와 자판기를 갖춰 체크인부터 늦은 밤까지 편안하게 이용할 수 있다.',
     tags:['라운지','로비','자판기']
   },
   terrace:{
-    img:'https://gonylab-image.com/thebgyeong/special/2/1.jpg',
+    img:'https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/2/1.jpg',
     cat:'TERRACE',
     title:'테라스돔',
     desc:'유리 온실 형태의 오렌저리와 별빛 아래 감성적인 야외 공간 별가라. 사계절 다른 매력을 선사한다.',
@@ -2632,14 +2632,14 @@ const bsData={
     tags:['전망대','피크닉존','스파에어리어']
   },
   fire:{
-    img:'https://gonylab-image.com/thebgyeong/special/3/1.jpg',
+    img:'https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/3/1.jpg',
     cat:'OUTDOOR',
     title:'불멍',
     desc:'화로대 앞에 앉아 타오르는 불꽃을 바라보며 하루의 피로를 내려놓는 시간. 자연 속 가장 원초적인 힐링.',
     tags:['화로대','야외']
   },
   stepping:{
-    img:'https://gonylab-image.com/thebgyeong/special/4/1.jpg',
+    img:'https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/4/1.jpg',
     cat:'NATURE',
     title:'징검다리',
     desc:'예천의 자연 속을 걸는 산책 코스. 낙동강변을 따라 펼쳐지는 풍경과 함께하는 조용한 산책의 시간.',
@@ -2817,7 +2817,7 @@ function renderMenuSpecial(){
   if(!container)return;
   const items=(_apiData&&_apiData.n9)?_apiData.n9:[];
   container.innerHTML=items.map((s,i)=>{
-    const img=s.IMAGE_URL||s.IMG_URL||('https://gonylab-image.com/thebgyeong/special/'+(i+1)+'/1.jpg');
+    const img=s.IMAGE_URL||s.IMG_URL||('https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/'+(i+1)+'/1.jpg');
     const name=s.TITLE_KR||'';
     const en=s.TITLE_EN||'';
     return `
@@ -2871,7 +2871,7 @@ function openRoomTypeOverlay(preSelectIdx){
     const roomNames=cfg.keys.map(k=>rbsData[k]?.ttl||'').filter(Boolean);
     const firstKey=cfg.keys[0];
     const roomNum=rbsData[firstKey]?.imgs?.[0]?.match(/room\/([^/]+)\//)?.[1]||(i+1);
-    const thumb='https://gonylab-image.com/thebgyeong/room/'+roomNum+'/1.jpg';
+    const thumb='https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/room/'+roomNum+'/1.jpg';
     return `
       <div class="rto-type-card" onclick="openRoomListOverlay(${i})">
         <img class="rto-type-img" src="${thumb}" alt="${cfg.name}" loading="lazy"/>
