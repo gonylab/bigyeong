@@ -1,0 +1,3348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>더 비경 — Private Pool Villa (B)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a;max-width:430px;margin:0 auto;overflow-x:hidden}
+
+/* ===== INTRO ===== */
+#intro{
+  position:fixed;inset:0;z-index:9999;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .8s ease,visibility .8s ease;
+}
+#intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+.intro-slide{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  opacity:0;transition:opacity 1.2s ease;
+}
+.intro-slide.on{opacity:1}
+.intro-slide::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.intro-video{
+  position:absolute;inset:0;z-index:1;
+  overflow:hidden;
+}
+.intro-video video{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.intro-video::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.15);}
+.intro-logo-wrap{
+  position:relative;z-index:10;
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;
+  gap:20px;
+}
+.intro-logo{
+  width:182px;
+  position:absolute;
+  top:48px;
+  left:50%;
+  transform:translateX(-50%);
+}
+.intro-copy{
+  width:70%;
+  max-width:320px;
+  height:auto;
+  display:block;
+  margin:0 auto;
+}
+.intro-btn{
+  border:1px solid rgba(255,255,255,.5);
+  background:transparent;color:#fff;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;font-weight:300;letter-spacing:.12em;
+  padding:11px 32px;cursor:pointer;
+}
+.intro-spinner{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:36px;height:36px;
+  border:2px solid rgba(255,255,255,.25);
+  border-top-color:rgba(255,255,255,.8);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  z-index:5;
+  transition:opacity .4s;
+}
+.intro-spinner.hide{opacity:0;pointer-events:none}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* ===== 푸터 ===== */
+.site-footer{
+  padding:24px 20px 120px;
+  border-top:1px solid #f0f0f0;
+  background:#fff;
+}
+.site-footer .ft-logo{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:10px}
+.site-footer .ft-info{font-size:11px;font-weight:300;color:#aaa;line-height:2}
+.site-footer .ft-info b{color:#888;font-weight:400}
+.site-footer .ft-copy{font-size:10px;font-weight:300;color:#ccc;margin-top:12px}
+
+/* ===== GNB ===== */
+.gnb{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;z-index:100;
+  background:transparent;transition:background .3s;
+}
+.gnb.scrolled{background:#f5f1eb}
+/* 로고 래퍼 */
+.gnb-logo-wrap{display:flex;align-items:center;flex:1;}
+/* 스크롤 전: 스케치 로고 좌측 */
+.gnb-logo-sketch{display:block;height:44px;width:auto;object-fit:contain;}
+/* 스크롤 후: 필기체 로고 중앙 */
+.gnb-logo-script{display:none;height:48px;width:auto;object-fit:contain;}
+.gnb.scrolled .gnb-logo-wrap{justify-content:center;}
+.gnb.scrolled .gnb-logo-sketch{display:none;}
+.gnb.scrolled .gnb-logo-script{display:block;}
+/* 스크롤 후 메뉴 버튼 위치 고정 */
+.gnb.scrolled .gnb-menu-wrap{position:absolute;right:20px;}
+.gnb-menu-wrap{flex-shrink:0;}
+/* 구 텍스트 로고 (오버레이용) */
+.gnb-logo-main{font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:-0.5px}
+.gnb-logo-sub{font-size:9px;font-weight:300;color:#888;letter-spacing:2px;margin-top:1px}
+/* 오버레이 내 로고 이미지 */
+.gnb-logo-overlay{height:40px;width:auto;object-fit:contain;}
+/* 오버레이 GNB: 로고 중앙, 버튼 우측 절대위치 */
+.rlo-gnb .gnb-logo-wrap,
+.slo-gnb .gnb-logo-wrap,
+.splo-gnb .gnb-logo-wrap{
+  justify-content:center;
+}
+.rlo-gnb,
+.slo-gnb,
+.splo-gnb{
+  position:relative;
+  z-index:20;
+  pointer-events:all;
+}
+.rlo-gnb .gnb-menu,
+.slo-gnb .gnb-menu,
+.splo-gnb .gnb-menu{
+  position:absolute;right:20px;
+  z-index:30;
+  pointer-events:all;
+  touch-action:manipulation;
+}
+.gnb-menu{
+  width:44px;height:44px;border-radius:50%;
+  background:#fff;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+.gnb-menu svg{width:18px;height:18px;stroke:#1a1a1a;stroke-width:1.8;fill:none}
+
+/* ===== MENU OVERLAY ===== */
+.menu-overlay{
+  position:fixed;inset:0;background:#1a1a1a;z-index:1500;
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+  height:100vh;
+  height:100dvh;
+}
+.menu-overlay.open{transform:translateX(0)}
+.menu-top{display:flex;justify-content:flex-end;padding:20px 20px}
+.menu-close{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.menu-close svg{width:18px;height:18px;stroke:#fff;stroke-width:1.8;fill:none}
+.menu-nav{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;padding:40px 40px 24px;gap:8px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.menu-nav.centered{justify-content:center;}
+.menu-item{font-size:28px;font-weight:700;color:#fff;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+
+.menu-item-en{font-size:11px;font-weight:300;color:#888;letter-spacing:1px}
+.menu-item-arrow{width:20px;height:20px;stroke:#888;stroke-width:1.8;fill:none;transition:transform .3s;flex-shrink:0;margin-left:8px;}
+.menu-item.rooms-open .menu-item-arrow{transform:rotate(90deg);}
+
+/* ===== 예약 서브메뉴 패널 (독립 스타일) ===== */
+.menu-resv-panel{display:none;margin:0;}
+.menu-resv-panel.open{display:grid;grid-template-rows:1fr;animation:roomPanelIn .35s cubic-bezier(.4,0,.2,1);}
+.menu-resv-panel > .menu-sp-inner{overflow:hidden;}
+.menu-resv-panel .menu-sp-inner{padding:0;display:flex;flex-direction:column;gap:0;min-height:0;}
+.menu-resv-panel.open .menu-sp-inner{padding:4px 0 16px;}
+.menu-addr{padding:24px 40px;font-size:11px;font-weight:300;color:#555;line-height:2}
+
+/* ===== 메뉴 내 객실 아코디언 ===== */
+.menu-rooms-panel{
+  display:none;
+  margin:0 -40px;
+}
+.menu-rooms-panel.open{
+  display:grid;
+  grid-template-rows:1fr;
+  animation:roomPanelIn .35s cubic-bezier(.4,0,.2,1);
+}
+@keyframes roomPanelIn{
+  from{grid-template-rows:0fr;opacity:0;}
+  to{grid-template-rows:1fr;opacity:1;}
+}
+.menu-rooms-panel > .menu-rooms-inner{overflow:hidden;}
+.menu-rooms-inner{padding:0 20px;display:flex;flex-direction:column;gap:12px;min-height:0;}
+.menu-rooms-panel.open .menu-rooms-inner{padding:12px 20px 20px;}
+/* ===== 메뉴 내 스페셜 아코디언 ===== */
+.menu-sp-panel{
+  display:none;
+  margin:0 -40px;
+}
+.menu-sp-panel.open{
+  display:grid;
+  grid-template-rows:1fr;
+  animation:roomPanelIn .35s cubic-bezier(.4,0,.2,1);
+}
+.menu-sp-panel > .menu-sp-inner{overflow:hidden;}
+.menu-sp-inner{padding:0 20px;display:flex;flex-direction:column;gap:0;min-height:0;}
+.menu-sp-panel.open .menu-sp-inner{padding:8px 20px 20px;}
+.menu-sp-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  cursor:pointer;
+  transition:opacity .15s;
+}
+.menu-sp-item:last-child{border-bottom:none;}
+.menu-sp-item:active{opacity:.6;}
+.menu-sp-thumb{
+  width:48px;height:48px;border-radius:6px;
+  overflow:hidden;flex-shrink:0;
+  background:rgba(255,255,255,.1);
+}
+.menu-sp-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.menu-sp-info{flex:1;min-width:0;}
+.menu-sp-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:2px;}
+.menu-sp-en{font-size:10px;color:#888;letter-spacing:.06em;}
+.menu-sp-arr svg{width:14px;height:14px;stroke:#666;stroke-width:2;fill:none;}
+.menu-type-card{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  cursor:pointer;
+  transition:opacity .15s;
+}
+.menu-type-card:last-child{border-bottom:none;}
+.menu-type-card:active{opacity:.6;}
+.menu-type-img{
+  width:48px;height:48px;border-radius:6px;
+  object-fit:cover;display:block;flex-shrink:0;
+  background:rgba(255,255,255,.1);
+}
+.menu-type-body{
+  flex:1;min-width:0;
+  display:flex;flex-direction:column;
+}
+.menu-type-logo-row{display:flex;align-items:center;gap:8px;}
+.menu-type-logo{height:18px;object-fit:contain;flex-shrink:0;filter:brightness(0) invert(1);opacity:.7;}
+.menu-type-name{font-size:14px;font-weight:600;color:#fff;flex:1;}
+.menu-type-rooms-row{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;}
+.menu-type-room-tag{
+  font-size:10px;color:rgba(255,255,255,.45);
+}
+.menu-type-room-tag:not(:last-child)::after{content:' ·';margin-right:2px;}
+.menu-type-arrow{flex-shrink:0;}
+.menu-type-arrow svg{width:14px;height:14px;stroke:#666;stroke-width:2;fill:none;}
+.menu-type-cta-btn{display:none;}
+.menu-type-cta{display:none;}
+
+/* ===== HERO SLIDER ===== */
+.hero-wrap{
+  padding:72px 16px 0;
+  background:#f5f1eb;
+}
+.hero-slider-outer{
+  position:relative;overflow:hidden;border-radius:20px;
+}
+.hero-slides{
+  display:flex;transition:transform .45s cubic-bezier(.4,0,.2,1);
+}
+.hero-slide{
+  min-width:100%;position:relative;
+  border-radius:20px;overflow:hidden;
+}
+.hero-slide-img{
+  width:100%;aspect-ratio:3/4;object-fit:cover;display:block;
+  background:#2a2a2a;
+}
+.hero-slide-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.1) 0%,rgba(0,0,0,.55) 100%);
+  border-radius:20px;
+}
+.hero-slide-top{
+  position:absolute;top:16px;left:16px;right:16px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.hero-slide-label{
+  font-size:13px;font-weight:500;color:#fff;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(4px);
+  padding:5px 12px;border-radius:20px;
+}
+.hero-slide-arrow{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.2);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;
+}
+.hero-slide-arrow svg{width:14px;height:14px;stroke:#fff;stroke-width:2;fill:none}
+.hero-slide-body{
+  position:absolute;bottom:0;left:0;right:0;padding:20px;
+}
+.hero-badge{
+  display:inline-block;background:#b4915a;color:#fff;
+  font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;margin-bottom:8px;
+}
+.hero-title{font-size:26px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:6px}
+.hero-desc{font-size:12px;font-weight:300;color:rgba(255,255,255,.85);margin-bottom:14px;line-height:1.5}
+.hero-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(4px);
+  border:1px solid rgba(255,255,255,.4);color:#fff;
+  font-size:12px;font-weight:400;padding:8px 16px;border-radius:20px;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.hero-btn svg{width:12px;height:12px;stroke:#fff;stroke-width:2;fill:none}
+/* prev peek */
+.hero-prev-peek{
+  position:absolute;top:0;left:-8px;bottom:0;width:24px;
+  background:rgba(0,0,0,.25);backdrop-filter:blur(2px);
+  border-radius:20px 0 0 20px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;
+}
+.hero-prev-peek svg{width:12px;height:12px;stroke:#fff;stroke-width:2.5;fill:none}
+.hero-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:#ccc;transition:all .3s;cursor:pointer}
+.hero-dot.active{width:18px;border-radius:3px;background:#1a1a1a}
+
+/* ===== NOTICE BANNER ===== */
+.notice{
+  margin:16px 16px 0;
+  background:#fff;border-radius:10px;
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;
+}
+.notice-badge{background:#1a1a1a;color:#fff;font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.notice-text{font-size:12px;font-weight:400;color:#333;flex:1}
+.notice-arr{width:16px;height:16px;stroke:#999;stroke-width:2;fill:none;flex-shrink:0}
+
+/* ===== SECTION HEADER ===== */
+.sec-hd{display:flex;align-items:flex-end;justify-content:space-between;padding:32px 20px 16px}
+.sec-hd-left{}
+.sec-hd-title{font-size:22px;font-weight:700;color:#1a1a1a;line-height:1.35}
+.sec-hd-title span{color:#b4915a;font-weight:400}
+.sec-hd-sub{font-size:11px;font-weight:300;color:#999;margin-top:3px}
+.sec-hd-right{font-size:11px;font-weight:400;color:#999;white-space:nowrap}
+
+/* ===== ROOM TYPE TABS =====*/
+.room-type-tabs{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding:0 20px 16px;gap:0;
+}
+.room-type-tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;padding-bottom:10px;
+  border-bottom:2px solid transparent;
+  transition:border-color .2s,opacity .2s;
+  opacity:.4;
+}
+.room-type-tab.active{border-bottom-color:#1a1a1a;opacity:1;}
+.room-type-tab-logo{
+  width:90px;height:auto;object-fit:contain;
+  filter:grayscale(1);
+  transition:filter .2s;
+}
+.room-type-tab.active .room-type-tab-logo{filter:none;}
+.room-type-tab-name{
+  font-size:12px;font-weight:600;color:#1a1a1a;letter-spacing:-.2px;
+}
+
+/* ===== ROOM CARD GRID ===== */
+.sp-grid-outer{
+  padding:0;
+  overflow-x:scroll;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.sp-grid-outer::-webkit-scrollbar{display:none}
+.sp-grid-slides{
+  display:flex;
+  gap:10px;
+  padding:0 16px;
+  /* transition 제거 — scroll-snap이 처리 */
+}
+.sp-card{
+  width:calc((100vw - 32px - 10px) / 1.5);
+  max-width:calc((398px - 10px) / 1.5);
+  flex:0 0 calc((100vw - 32px - 10px) / 1.5);
+  scroll-snap-align:start;
+  border-radius:14px;overflow:hidden;position:relative;cursor:pointer;
+  aspect-ratio:1/1;
+}
+.sp-card-img{width:100%;height:100%;object-fit:cover;display:block;background:#2a2a2a}
+.sp-card-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.05) 30%,rgba(0,0,0,.65) 100%);
+}
+.sp-card-icon{
+  position:absolute;top:10px;left:10px;
+  width:32px;height:32px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.6);
+  display:flex;align-items:center;justify-content:center;
+}
+.sp-card-icon svg{width:14px;height:14px;stroke:#fff;stroke-width:1.8;fill:none}
+.sp-card-body{position:absolute;bottom:0;left:0;right:0;padding:10px}
+.sp-card-title{font-size:12px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:3px}
+.sp-card-sub{font-size:10px;font-weight:300;color:rgba(255,255,255,.8);line-height:1.4}
+.sp-card-arr{
+  position:absolute;bottom:10px;right:10px;
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+}
+.sp-card-arr svg{width:9px;height:9px;stroke:#fff;stroke-width:2.5;fill:none}
+.sp-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.sp-dot{width:6px;height:6px;border-radius:50%;background:#ccc;cursor:pointer;transition:background .3s}
+.sp-dot.active{background:#1a1a1a}
+.sp-hint{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:11px;font-weight:300;color:#999}
+.sp-hint svg{width:14px;height:14px;stroke:#999;stroke-width:1.5;fill:none}
+
+/* ===== ACTION BUTTONS ===== */
+.action-wrap{margin:28px 16px 0;display:flex;flex-direction:column;gap:8px;}
+/* 상단 와이드 — 공식예약할인 */
+.action-top{
+  background:#3a3028;border-radius:14px;
+  display:flex;align-items:center;gap:14px;
+  padding:18px 20px;cursor:pointer;
+}
+.action-top-icon{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.action-top-icon svg{width:18px;height:18px;stroke:#fff;stroke-width:1.8;fill:none;}
+.action-top-body{flex:1;}
+.action-top-label{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.5px;margin-bottom:3px;}
+.action-top-title{font-size:15px;font-weight:700;color:#fff;}
+.action-top-arr{width:18px;height:18px;stroke:rgba(255,255,255,.4);stroke-width:2;fill:none;flex-shrink:0;}
+/* 중단 3열 */
+.action-mid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.action-cell{
+  background:#ede9e1;border-radius:14px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:18px 6px;gap:7px;cursor:pointer;
+}
+.action-cell svg{width:22px;height:22px;stroke:#3a3530;stroke-width:1.6;fill:none;}
+.action-cell-title{font-size:12px;font-weight:600;color:#1a1a1a;}
+.action-cell-sub{font-size:10px;color:#999;font-weight:300;}
+/* 하단 와이드 — 단지배치도 */
+.action-bot{
+  background:#ede9e1;border-radius:14px;
+  display:flex;align-items:center;gap:14px;
+  padding:18px 20px;cursor:pointer;
+}
+.action-bot-icon{width:36px;height:36px;border-radius:50%;background:rgba(26,26,26,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.action-bot-icon svg{width:18px;height:18px;stroke:#3a3530;stroke-width:1.8;fill:none;}
+.action-bot-body{flex:1;}
+.action-bot-label{font-size:10px;color:#aaa;letter-spacing:.5px;margin-bottom:3px;}
+.action-bot-title{font-size:15px;font-weight:700;color:#1a1a1a;}
+.action-bot-arr{width:18px;height:18px;stroke:#bbb;stroke-width:2;fill:none;flex-shrink:0;}
+/* 단지배치도 오버레이 */
+.map-overlay{
+  display:none;position:fixed;inset:0;z-index:2000;
+  background:#1a1a18;
+  flex-direction:column;
+  overflow:hidden;
+}
+.map-overlay.open{display:flex;}
+.map-gnb{
+  flex-shrink:0;
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  padding:12px 20px;
+  background:rgba(20,20,18,.95);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.map-gnb-logo-wrap{display:flex;align-items:center;justify-content:center;}
+.map-gnb-logo-img{height:40px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.85;}
+.map-gnb-close{
+  position:absolute;right:20px;
+  width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.map-gnb-close svg{width:18px;height:18px;stroke:#f0ece4;stroke-width:1.8;fill:none;}
+.map-header{
+  flex-shrink:0;padding:16px 20px 12px;
+  display:flex;flex-direction:column;gap:2px;
+  background:rgba(20,20,18,.95);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.map-header-title{font-size:22px;font-weight:700;color:#f0ece4;letter-spacing:-.03em;}
+.map-header-sub{font-size:11px;color:rgba(240,236,228,.45);letter-spacing:.12em;}
+.map-hint{
+  flex-shrink:0;text-align:center;
+  font-size:11px;color:rgba(240,236,228,.4);
+  padding:6px 0 4px;
+  letter-spacing:.3px;
+}
+.map-canvas-wrap{
+  flex:1;overflow:hidden;
+  position:relative;
+  cursor:grab;
+  touch-action:none;
+}
+.map-canvas-wrap:active{cursor:grabbing;}
+.map-canvas{
+  position:absolute;
+  transform-origin:0 0;
+  will-change:transform;
+}
+.map-canvas img{
+  display:block;
+  width:100%;
+  height:auto;
+  pointer-events:none;
+  user-select:none;
+}
+/* 마커 — 풍선+꼬리+핀 통합 디자인 */
+.map-marker{
+  position:absolute;
+  opacity:0;
+  transition:opacity .3s ease;
+  cursor:pointer;
+  pointer-events:auto;
+  display:flex;
+  align-items:center;
+  gap:0;
+}
+.map-marker.visible{opacity:1;}
+/* dir=up(기본): 핀이 아래, 풍선이 위 */
+.map-marker.dir-up{
+  transform:translate(-50%,-100%);
+  flex-direction:column-reverse;
+  align-items:center;
+}
+/* dir=down: 풍선이 위, 핀이 아래 */
+.map-marker.dir-down{
+  transform:translate(-50%,0);
+  flex-direction:column;
+  align-items:center;
+}
+/* dir=right: 핀이 왼쪽, 풍선이 오른쪽 */
+.map-marker.dir-right{
+  transform:translate(0,-50%);
+  flex-direction:row;
+  align-items:center;
+}
+/* dir=left: 풍선이 왼쪽, 핀이 오른쪽(풍선 오른쪽에 꼬리) */
+.map-marker.dir-left{
+  transform:translate(-100%,-50%);
+  flex-direction:row-reverse;
+  align-items:center;
+}
+/* 핀(동그라미) */
+.map-marker-pin{
+  width:10px;height:10px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.95);
+  box-shadow:0 0 0 2px rgba(0,0,0,.3), 0 2px 6px rgba(0,0,0,.5);
+  flex-shrink:0;
+  position:relative;
+  z-index:2;
+}
+/* 풍선 라벨 */
+.map-marker-label{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1px;
+  padding:5px 9px;
+  border-radius:7px;
+  white-space:nowrap;
+  box-shadow:0 2px 10px rgba(0,0,0,.5);
+  position:relative;
+  z-index:1;
+}
+.map-marker-type{
+  font-size:8px;
+  font-weight:500;
+  opacity:.8;
+  letter-spacing:.3px;
+  line-height:1.2;
+}
+.map-marker-name{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.2px;
+  line-height:1.2;
+}
+.map-marker-label-sm{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+/* 꼬리: dir=up — 풍선 아래쪽 중앙에 삼각형 */
+.map-marker.dir-up .map-marker-label::after{
+  content:'';
+  position:absolute;
+  top:100%;left:50%;
+  transform:translateX(-50%);
+  border:5px solid transparent;
+  border-top-color:inherit;
+}
+/* 꼬리: dir=down — 풍선 아래쪽 중앙에 삼각형(아래 방향) */
+.map-marker.dir-down .map-marker-label::after{
+  content:'';
+  position:absolute;
+  bottom:100%;left:50%;
+  transform:translateX(-50%);
+  border:5px solid transparent;
+  border-bottom-color:inherit;
+}
+/* 꼬리: dir=right — 풍선 왼쪽에 삼각형 */
+.map-marker.dir-right .map-marker-label::after{
+  content:'';
+  position:absolute;
+  top:50%;right:100%;
+  transform:translateY(-50%);
+  border:5px solid transparent;
+  border-right-color:inherit;
+}
+/* 꼬리: dir=left — 풍선 오른쪽에 삼각형 */
+.map-marker.dir-left .map-marker-label::after{
+  content:'';
+  position:absolute;
+  top:50%;left:100%;
+  transform:translateY(-50%);
+  border:5px solid transparent;
+  border-left-color:inherit;
+}
+/* 마커 카테고리 색상 */
+.map-marker.type-pool .map-marker-pin{background:#4a9eff;border-color:rgba(255,255,255,.95);}
+.map-marker.type-pool .map-marker-label{background:#1e4a7a;color:#a8d4ff;}
+.map-marker.type-pool.dir-up .map-marker-label::after{border-top-color:#1e4a7a;}
+.map-marker.type-pool.dir-down .map-marker-label::after{border-bottom-color:#1e4a7a;}
+.map-marker.type-pool.dir-right .map-marker-label::after{border-right-color:#1e4a7a;}
+.map-marker.type-villa .map-marker-pin{background:#7ec8a0;border-color:rgba(255,255,255,.95);}
+.map-marker.type-villa .map-marker-label{background:#1a4a30;color:#a8e8c0;}
+.map-marker.type-villa.dir-up .map-marker-label::after{border-top-color:#1a4a30;}
+.map-marker.type-villa.dir-down .map-marker-label::after{border-bottom-color:#1a4a30;}
+.map-marker.type-villa.dir-right .map-marker-label::after{border-right-color:#1a4a30;}
+.map-marker.type-villa.dir-left .map-marker-label::after{border-left-color:#1a4a30;}
+.map-marker.type-private .map-marker-pin{background:#c8a87e;border-color:rgba(255,255,255,.95);}
+.map-marker.type-private .map-marker-label{background:#4a3018;color:#f0d4a8;}
+.map-marker.type-private.dir-up .map-marker-label::after{border-top-color:#4a3018;}
+.map-marker.type-private.dir-down .map-marker-label::after{border-bottom-color:#4a3018;}
+.map-marker.type-private.dir-right .map-marker-label::after{border-right-color:#4a3018;}
+.map-marker.type-private.dir-left .map-marker-label::after{border-left-color:#4a3018;}
+.map-marker.type-facility .map-marker-pin{background:#e87878;border-color:rgba(255,255,255,.95);}
+.map-marker.type-facility .map-marker-label{background:#4a1818;color:#f0a8a8;}
+.map-marker.type-facility.dir-up .map-marker-label::after{border-top-color:#4a1818;}
+.map-marker.type-facility.dir-down .map-marker-label::after{border-bottom-color:#4a1818;}
+.map-marker.type-facility.dir-right .map-marker-label::after{border-right-color:#4a1818;}
+.map-marker.type-facility.dir-left .map-marker-label::after{border-left-color:#4a1818;}
+.map-marker.type-common .map-marker-pin{background:#c878e8;border-color:rgba(255,255,255,.95);}
+.map-marker.type-common .map-marker-label{background:#3a1848;color:#e8a8f8;}
+.map-marker.type-common.dir-up .map-marker-label::after{border-top-color:#3a1848;}
+.map-marker.type-common.dir-down .map-marker-label::after{border-bottom-color:#3a1848;}
+.map-marker.type-common.dir-right .map-marker-label::after{border-right-color:#3a1848;}
+.map-marker.type-common.dir-left .map-marker-label::after{border-left-color:#3a1848;}
+/* 범례 */
+.map-legend{
+  flex-shrink:0;
+  display:flex;gap:10px;flex-wrap:wrap;
+  padding:8px 16px 12px;
+  background:rgba(20,20,18,.95);
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.map-legend-item{
+  display:flex;align-items:center;gap:5px;
+  font-size:10px;color:rgba(240,236,228,.6);
+}
+.map-legend-dot{
+  width:8px;height:8px;border-radius:50%;
+}
+
+/* ===== BRAND COPY ===== */
+.brand-copy{
+  padding:32px 20px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.brand-copy-leaf svg{width:16px;height:16px;stroke:#b4915a;stroke-width:1.5;fill:none}
+.brand-copy-text{font-size:14px;font-weight:300;color:#555;line-height:1.8}
+.brand-copy-name{font-size:15px;font-weight:700;color:#1a1a1a}
+
+/* ===== BOTTOM BAR ===== */
+.bottom-bar{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  display:flex;gap:8px;padding:10px 16px 24px;
+  background:#f5f1eb;border-top:1px solid #e8e3da;z-index:50;
+}
+.bottom-reserve{
+  flex:1;background:#1a1a1a;color:#fff;
+  border:none;border-radius:12px;padding:14px;
+  font-size:14px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.bottom-reserve svg{width:16px;height:16px;stroke:#fff;stroke-width:1.8;fill:none}
+.bottom-insta{
+  width:52px;background:#fff;border:1px solid #e0dbd2;
+  border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.bottom-insta svg{width:20px;height:20px;stroke:#1a1a1a;stroke-width:1.6;fill:none}
+
+/* ===== BOTTOM SHEET ===== */
+.bs-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.bs-backdrop.open{opacity:1;pointer-events:all}
+.bs-sheet{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
+  width:100%;max-width:430px;
+  background:#fff;border-radius:20px 20px 0 0;
+  z-index:301;transition:transform .35s cubic-bezier(.4,0,.2,1);
+  max-height:80vh;overflow-y:auto;
+}
+.bs-sheet.open{transform:translateX(-50%) translateY(0)}
+.bs-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:12px auto 0}
+.bs-img{width:100%;aspect-ratio:16/9;object-fit:cover;background:#2a2a2a}
+.bs-body{padding:20px}
+.bs-cat{font-size:10px;font-weight:500;color:#b4915a;letter-spacing:1.5px;margin-bottom:6px}
+.bs-title{font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:10px;line-height:1.3}
+.bs-desc{font-size:13px;font-weight:300;color:#555;line-height:1.8;margin-bottom:16px}
+.bs-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;margin-bottom:20px}
+.bs-tag{background:#f5f1eb;color:#666;font-size:11px;font-weight:400;padding:5px 10px;border-radius:20px}
+.bs-close-btn{
+  width:100%;background:#1a1a1a;color:#fff;border:none;border-radius:12px;
+  padding:14px;font-size:14px;font-weight:600;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;
+}
+
+/* ===== SPACER ===== */
+.pb-bar{height:80px}
+
+/* ===== 객실 바텀시트 ===== */
+.rbs-dim{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1100;opacity:0;visibility:hidden;transition:.3s}
+.rbs-dim.on{opacity:1;visibility:visible}
+.rbs-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:430px;background:#fff;z-index:1150;border-radius:16px 16px 0 0;max-height:90vh;overflow-y:auto;transition:transform .4s cubic-bezier(.25,.46,.45,.94);padding-bottom:40px}
+.rbs-sheet.on{transform:translateX(-50%) translateY(0)}
+.rbs-head{padding:16px 16px 0;display:flex;justify-content:space-between;align-items:flex-start}
+.rbs-ttl{font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:-.02em}
+.rbs-stl{font-size:12px;font-weight:300;color:#888;margin-top:4px}
+.rbs-x{width:30px;height:30px;border-radius:50%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.rbs-x svg{width:13px;height:13px;stroke:#555;fill:none;stroke-width:1.5}
+.rbs-slider{position:relative;overflow:hidden;margin:14px 0 0;aspect-ratio:4/3;background:#f0ece4}
+.rbs-slides{display:flex;height:100%;transition:transform .35s cubic-bezier(.25,.46,.45,.94)}
+.rbs-slide{min-width:100%;height:100%;flex-shrink:0}
+.rbs-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.rbs-prev,.rbs-next{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.85);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+.rbs-prev{left:10px}.rbs-next{right:10px}
+.rbs-prev svg,.rbs-next svg{width:14px;height:14px;stroke:#333;fill:none;stroke-width:2}
+.rbs-counter{position:absolute;bottom:10px;right:12px;font-size:11px;font-weight:500;color:#fff;background:rgba(0,0,0,.4);border-radius:10px;padding:3px 8px}
+.rbs-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
+.rbs-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);transition:.2s}
+.rbs-dot.on{background:#fff;width:14px;border-radius:3px}
+.rbs-tags{display:flex;gap:6px;padding:14px 16px 14px;overflow-x:auto;scrollbar-width:none;flex-wrap:wrap}
+.rbs-tag{padding:5px 12px;border-radius:20px;border:1px solid #e8e4dc;font-size:11px;font-weight:300;color:#666}
+.rbs-section{padding:0 16px 16px;border-top:1px solid #f5f5f5}
+.rbs-section-title{font-size:13px;font-weight:700;color:#1a1a1a;padding:14px 0 10px}
+.rbs-pts{list-style:none;display:flex;flex-direction:column;gap:8px}
+.rbs-pts li{font-size:13px;font-weight:300;color:#555;line-height:1.7;padding-left:12px;position:relative}
+.rbs-pts li::before{content:'';position:absolute;left:0;top:9px;width:4px;height:4px;border-radius:50%;background:#c8a96e}
+.rbs-tbl{width:100%;border-collapse:collapse}
+.rbs-tbl tr{border-bottom:1px solid #f8f8f8}
+.rbs-tbl tr:last-child{border-bottom:none}
+.rbs-tbl td{padding:9px 0;font-size:12.5px}
+.rbs-tbl td:first-child{color:#bbb;width:90px}
+.rbs-tbl td:last-child{color:#1a1a1a;font-weight:500}
+.rbs-cta{display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 16px 0;padding:15px;background:#1a1a1a;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;border:none;width:calc(100% - 32px)}
+.rbs-price-peak td:last-child{color:#c0392b;font-weight:700}
+.rbs-lbl{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500;margin-left:4px;vertical-align:middle}
+.rbs-lbl-peak{background:#fde8e8;color:#c0392b}
+.rbs-lbl-high{background:#fef3e2;color:#e67e22}
+.rbs-lbl-normal{background:#e8f5e9;color:#27ae60}
+/* 영상 섹션 */
+.video-section{padding:0;margin:28px 0 0;background:#000;}
+.video-wrap{width:100%;aspect-ratio:1/1;background:#000;overflow:hidden;position:relative;}
+.video-wrap video{width:100%;height:100%;object-fit:cover;display:block;}
+.video-player{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ===== 객실 타입 선택 오버레이 ===== */
+.room-type-overlay{
+  position:fixed;inset:0;background:#f5f1eb;z-index:300;
+  transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;
+}
+.room-type-overlay.open{transform:translateX(0)}
+.rto-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 20px 16px;border-bottom:1px solid rgba(0,0,0,.08);
+  background:#f5f1eb;position:sticky;top:0;z-index:10;
+}
+.rto-title-main{font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:-.03em;}
+.rto-title{font-size:11px;font-weight:400;color:#b4915a;letter-spacing:.12em;margin-top:2px;}
+.rto-close{
+  width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.06);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.rto-close svg{width:18px;height:18px;stroke:#1a1a1a;stroke-width:1.8;fill:none;}
+.rto-body{padding:20px 20px 40px;display:flex;flex-direction:column;gap:16px;}
+.rto-type-card{
+  background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);cursor:pointer;
+  transition:transform .15s,box-shadow .15s;
+}
+.rto-type-card:active{transform:scale(.98);box-shadow:0 1px 6px rgba(0,0,0,.1);}
+.rto-type-img{width:100%;aspect-ratio:16/7;object-fit:cover;display:block;}
+.rto-type-body{padding:16px 18px 18px;}
+.rto-type-logo{height:36px;object-fit:contain;margin-bottom:8px;display:block;}
+.rto-type-name{font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px;}
+.rto-type-sub{font-size:12px;color:#888;margin-bottom:12px;}
+.rto-type-rooms{display:flex;flex-wrap:wrap;gap:6px;}
+.rto-room-tag{
+  font-size:11px;color:#b4915a;background:#faf6f0;
+  border:1px solid #e8ddd0;border-radius:20px;
+  padding:4px 10px;font-weight:500;
+}
+.rto-type-arrow{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px 14px;color:#b4915a;font-size:12px;font-weight:600;
+}
+.rto-type-arrow svg{width:16px;height:16px;stroke:#b4915a;stroke-width:2;fill:none;}
+
+/* ===== 객실 목록 오버레이 ===== */
+.room-list-overlay{
+  position:fixed;inset:0;background:#f5f1eb;z-index:1000;
+  transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;
+}
+.room-list-overlay.open{transform:translateX(0)}
+/* GNB in overlay — fixed position 해제, 오버레이 안에서 sticky */
+.rlo-gnb{
+  position:sticky!important;top:0!important;left:0!important;
+  transform:none!important;width:100%!important;max-width:100%!important;
+  background:#f5f1eb!important;z-index:10;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.rlo-gnb .gnb-logo-main{color:#1a1a1a!important}
+.rlo-gnb .gnb-logo-sub{color:#888!important}
+.rlo-gnb .gnb-menu{background:rgba(0,0,0,.06)!important;box-shadow:none!important}
+.rlo-gnb .gnb-menu svg{stroke:#1a1a1a!important}
+/* 타입 헤더 */
+.rlo-type-header{
+  position:relative;
+  padding:0;
+  border-bottom:1px solid rgba(0,0,0,.08);
+  overflow:hidden;
+  min-height:190px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.rlo-type-header-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,#3b4a2e 0%,#4a5535 35%,#5c4a2a 70%,#4a3820 100%);
+  z-index:0;
+}
+.rlo-type-header-bg::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,0) 0%,rgba(0,0,0,.28) 100%);
+}
+.rlo-type-header-inner{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;
+  padding:16px 20px 22px 20px;
+  gap:8px;
+}
+.rlo-header-top-row{
+  display:flex;align-items:center;gap:16px;
+}
+.rlo-header-logo{
+  height:64px;max-width:120px;object-fit:contain;object-position:left center;display:block;flex-shrink:0;
+  filter:brightness(0) invert(1);
+  opacity:.9;
+}
+.rlo-header-info{display:flex;flex-direction:column;gap:4px;}
+.rlo-header-name{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.3px;}
+.rlo-header-en{font-size:10px;font-weight:300;color:rgba(255,255,255,.55);letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;}
+.rlo-header-desc{
+  font-size:11.5px;font-weight:300;color:rgba(255,255,255,.72);
+  line-height:1.65;
+  border-top:1px solid rgba(255,255,255,.15);
+  padding-top:10px;
+  margin-top:4px;
+}
+.rlo-body{padding:16px 20px 40px;display:flex;flex-direction:column;gap:20px;flex:1;}
+/* 푸터/바텀바 오버레이 내 */
+.rlo-footer{margin-top:0!important}
+.rlo-bottom-bar{
+  position:sticky;bottom:0;left:0;width:100%;
+  max-width:100%!important;
+  transform:none!important;
+  display:flex;gap:8px;padding:10px 16px 24px;
+  background:#f5f1eb;border-top:1px solid rgba(0,0,0,.08);
+  z-index:410;
+}
+.rlo-room-card{
+  background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);cursor:pointer;
+  transition:transform .15s,box-shadow .15s;
+}
+.rlo-room-card:active{transform:scale(.99);box-shadow:0 1px 6px rgba(0,0,0,.1);}
+.rlo-room-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
+.rlo-room-body{padding:16px 18px 18px;}
+.rlo-room-title{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px;}
+.rlo-room-sub{font-size:12px;color:#888;line-height:1.5;margin-bottom:12px;}
+.rlo-room-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.rlo-room-tag{
+  font-size:11px;color:#b4915a;background:#faf6f0;
+  border:1px solid #e8ddd0;border-radius:20px;padding:4px 10px;font-weight:500;
+}
+.rlo-room-cta{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;background:#3a3028;border-radius:10px;
+  color:#f5f1eb;font-size:13px;font-weight:600;
+}
+.rlo-room-cta svg{width:16px;height:16px;stroke:#f5f1eb;stroke-width:2;fill:none;}
+
+/* ===== 스페셜 오버레이 ===== */
+/* ===== 예약안내 오버레이 ===== */
+.resv-guide-overlay{
+  position:fixed;inset:0;background:#f5f1eb;z-index:1000;
+  transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;
+}
+.resv-guide-overlay.open{transform:translateX(0)}
+.resv-guide-body{
+  flex:1;padding:24px 20px 0;overflow-y:auto;
+}
+.resv-guide-section{
+  margin-bottom:32px;
+}
+.resv-guide-section-title{
+  font-size:15px;font-weight:700;color:#1a1a1a;
+  letter-spacing:-.02em;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:2px solid #b4915a;
+}
+.resv-guide-item{
+  font-size:13px;font-weight:300;color:#444;
+  line-height:1.8;padding:8px 0;
+  border-bottom:1px solid #ebe7e0;
+}
+.resv-guide-item:last-child{border-bottom:none;}
+.resv-refund-table{
+  width:100%;border-collapse:collapse;font-size:12px;
+  margin-top:4px;
+}
+.resv-refund-table th{
+  background:#f0ebe2;color:#b4915a;font-weight:600;
+  padding:8px 10px;text-align:center;border:1px solid #e0d8cc;
+}
+.resv-refund-table td{
+  padding:8px 10px;text-align:center;
+  border:1px solid #e0d8cc;color:#444;
+}
+.resv-guide-footer{
+  position:sticky;bottom:0;background:#f5f1eb;
+  padding:16px 20px 32px;
+  border-top:1px solid rgba(0,0,0,.06);
+}
+.resv-agree-btn{
+  width:100%;padding:16px;
+  background:#1a1a1a;color:#fff;
+  border:none;border-radius:12px;
+  font-size:14px;font-weight:600;
+  cursor:pointer;letter-spacing:-.01em;
+  transition:opacity .15s;
+}
+.resv-agree-btn:active{opacity:.7}
+.resv-guide-loading{
+  text-align:center;padding:40px 0;
+  font-size:13px;color:#aaa;
+}
+
+.special-overlay{
+  position:fixed;inset:0;background:#f5f1eb;z-index:1000;
+  transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;
+}
+.special-overlay.open{transform:translateX(0)}
+/* ===== 갤러리 ===== */
+.gallery-grid{
+  padding:12px;
+  columns:2;column-gap:8px;
+  flex:1;
+}
+.gallery-item{
+  break-inside:avoid;
+  margin-bottom:8px;
+  border-radius:10px;
+  overflow:hidden;
+  cursor:pointer;
+  position:relative;
+  background:#e0dbd2;
+}
+.gallery-item:nth-child(3n+1){aspect-ratio:2/3;}
+.gallery-item:nth-child(3n+2){aspect-ratio:1/1;}
+.gallery-item:nth-child(3n){aspect-ratio:3/4;}
+.gallery-item img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .3s ease;
+}
+.gallery-item:active img{transform:scale(1.03);}
+/* 라이트박스 */
+.gallery-lightbox{
+  display:none;
+  position:fixed;inset:0;z-index:3000;
+  background:rgba(0,0,0,.96);
+  flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.gallery-lightbox.open{display:flex;}
+.glb-img-wrap{
+  width:100%;flex:1;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  padding:60px 0 50px;
+}
+.glb-img{
+  max-width:100%;max-height:100%;
+  object-fit:contain;
+  border-radius:4px;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.glb-close{
+  position:absolute;top:16px;right:16px;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  z-index:10;
+}
+.glb-close svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none;}
+.glb-prev,.glb-next{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  z-index:10;
+}
+.glb-prev{left:12px;}
+.glb-next{right:12px;}
+.glb-prev svg,.glb-next svg{width:22px;height:22px;stroke:#fff;stroke-width:2;fill:none;}
+.glb-counter{
+  position:absolute;bottom:20px;
+  font-size:13px;color:rgba(255,255,255,.6);
+  letter-spacing:.06em;
+}
+/* GNB in special overlay */
+.slo-gnb{
+  position:sticky!important;top:0!important;left:0!important;
+  transform:none!important;width:100%!important;max-width:100%!important;
+  background:#f5f1eb!important;z-index:10;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.slo-gnb .gnb-logo-main{color:#1a1a1a!important}
+.slo-gnb .gnb-logo-sub{color:#888!important}
+.slo-gnb .gnb-menu{background:rgba(0,0,0,.06)!important;box-shadow:none!important}
+.slo-gnb .gnb-menu svg{stroke:#1a1a1a!important}
+/* 스페셜 헤더 */
+.slo-header{
+  display:flex;flex-direction:column;gap:2px;
+  padding:18px 20px 16px;border-bottom:1px solid rgba(0,0,0,.08);
+  background:#f5f1eb;
+}
+.slo-header-title{
+  font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:-.03em;
+}
+.slo-header-sub{
+  font-size:11px;font-weight:400;color:#b4915a;letter-spacing:.12em;
+}
+/* 스페셜 목차 */
+.slo-toc{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding:14px 20px 16px;border-bottom:1px solid rgba(0,0,0,.06);
+  background:#f5f1eb;
+}
+.slo-toc-btn{
+  font-size:12px;font-weight:500;color:#b4915a;
+  background:#faf6f0;border:1px solid #e8ddd0;border-radius:20px;
+  padding:6px 14px;cursor:pointer;transition:background .15s,color .15s;
+  white-space:nowrap;
+}
+.slo-toc-btn:active{background:#b4915a;color:#fff;}
+/* 스페셜 카드 목록 */
+.slo-body{
+  padding:20px 20px 40px;
+  display:flex;flex-direction:column;gap:28px;
+  flex:1;
+}
+.slo-item{scroll-margin-top:120px;}
+.slo-item-img{
+  width:100%;aspect-ratio:4/3;
+  border-radius:12px;overflow:hidden;background:#e0dbd2;
+  margin-bottom:14px;
+}
+.slo-item-img img{width:100%;height:100%;object-fit:cover;display:block;}
+/* 스페셜 다중 이미지 슬라이드 */
+.slo-item-slides{width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:#e0dbd2;margin-bottom:14px;position:relative;touch-action:pan-y;}
+.slo-slides-track{display:flex;width:100%;height:100%;transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform;}
+.slo-slide{width:100%;min-width:100%;height:100%;flex:0 0 100%;flex-shrink:0;}
+.slo-slide img{width:100%;height:100%;object-fit:cover;display:block;}
+.slo-slides-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px;}
+.slo-sdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;transition:all .25s;}
+.slo-sdot.active{width:18px;border-radius:3px;background:#fff;}
+.slo-item-cat{
+  font-size:11px;font-weight:500;color:#b4915a;
+  letter-spacing:.08em;margin-bottom:6px;
+}
+.slo-item-title{
+  font-size:20px;font-weight:700;color:#1a1a1a;
+  letter-spacing:-.02em;line-height:1.3;margin-bottom:10px;
+}
+.slo-item-desc{
+  font-size:13px;font-weight:300;color:#555;
+  line-height:1.8;margin-bottom:10px;
+}
+.slo-item-tags{
+  font-size:12px;font-weight:300;color:#aaa;
+}
+.slo-divider{
+  height:1px;background:#ebe7e0;
+}
+/* 푸터/바텀바 오버레이 내 */
+.slo-footer{margin-top:0!important}
+/* ===== 스페셜 목록 오버레이 ===== */
+.sp-list-overlay{
+  position:fixed;inset:0;background:#f5f1eb;z-index:1000;
+  transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.sp-list-overlay.open{transform:translateX(0)}
+.splo-gnb{
+  position:sticky!important;top:0!important;left:0!important;
+  right:0!important;z-index:100!important;
+  background:#f5f1eb!important;box-shadow:0 1px 0 rgba(0,0,0,.08)!important;
+}
+.splo-gnb .gnb-logo-main{color:#1a1a1a!important}
+.splo-gnb .gnb-logo-sub{color:#888!important}
+.splo-gnb .gnb-menu{background:rgba(0,0,0,.06)!important;box-shadow:none!important}
+.splo-gnb .gnb-menu svg{stroke:#1a1a1a!important}
+.splo-header{
+  display:flex;flex-direction:column;gap:2px;
+  padding:18px 20px 16px;
+  border-bottom:1px solid rgba(0,0,0,.07);
+  position:sticky;top:56px;background:#f5f1eb;z-index:99;
+}
+.splo-header-title{font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:-.03em;}
+.splo-header-sub{font-size:11px;color:#b4915a;letter-spacing:.12em;}
+.splo-body{padding:0 0 40px;flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+/* 스페셜 카드 아이템 */
+.splo-card-item{
+  background:#fff;
+  margin:12px 16px;
+  border-radius:14px;
+  overflow:hidden;
+  cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
+.splo-card-item:active{opacity:.92;}
+/* 단일 이미지 */
+.splo-card-img-wrap{width:100%;aspect-ratio:4/3;overflow:hidden;background:#ddd;}
+.splo-card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+/* 슬라이드 이미지 */
+.splo-card-slides{width:100%;aspect-ratio:4/3;position:relative;overflow:hidden;background:#ddd;touch-action:pan-y;cursor:grab;}
+.splo-card-track{display:flex;width:100%;height:100%;will-change:transform;transition:transform .35s cubic-bezier(.4,0,.2,1);user-select:none;}
+.splo-card-slide{width:100%;min-width:100%;height:100%;flex:0 0 100%;}
+.splo-card-slide img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
+.splo-card-dots{
+  position:absolute;bottom:8px;left:0;right:0;
+  display:flex;justify-content:center;gap:5px;
+}
+.splo-cdot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,.5);cursor:pointer;
+  transition:background .2s,transform .2s;
+}
+.splo-cdot.active{background:#fff;transform:scale(1.2);}
+/* 카드 메타 */
+.splo-card-meta{padding:12px 16px 14px;}
+.splo-card-name{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:3px;}
+.splo-card-en{font-size:11px;color:#888;letter-spacing:.06em;}
+.splo-bottom-bar{
+  position:sticky;bottom:0;left:0;width:100%;
+  max-width:100%!important;
+  transform:none!important;
+  display:flex;gap:8px;padding:10px 16px 24px;
+  background:#f5f1eb;border-top:1px solid rgba(0,0,0,.08);
+  z-index:1010;
+}
+.slo-bottom-bar{
+  position:sticky;bottom:0;left:0;width:100%;
+  max-width:100%!important;
+  transform:none!important;
+  display:flex;gap:8px;padding:10px 16px 24px;
+  background:#f5f1eb;border-top:1px solid rgba(0,0,0,.08);
+  z-index:1010;
+}
+/* ===== 주변여행지 전용 ===== */
+.travel-item-icon{
+  width:100%;aspect-ratio:4/3;
+  border-radius:12px;overflow:hidden;background:#f0ebe2;
+  margin-bottom:14px;
+  display:flex;align-items:center;justify-content:center;
+}
+.travel-item-icon svg{
+  width:64px;height:64px;
+}
+.travel-item-meta{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:8px;
+}
+.travel-item-distance{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:12px;font-weight:500;color:#b4915a;
+  background:#faf6f0;border:1px solid #e8ddd0;
+  border-radius:20px;padding:4px 12px;
+}
+.travel-item-distance svg{
+  width:14px;height:14px;flex-shrink:0;
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-spinner" id="introSpinner"></div>
+  <div class="intro-video">
+    <video id="introVideo" autoplay muted playsinline loop></video>
+  </div>
+  <div class="intro-logo-wrap">
+    <img src="logo.png" alt="더 비경" class="intro-logo"/>
+    <img class="intro-copy" src="intro_text.png" alt="오직, 더비경"/>
+    <button class="intro-btn" onclick="enterMain()">입장하기</button>
+  </div>
+</div>
+
+<!-- GNB -->
+<nav class="gnb" id="gnb">
+  <div class="gnb-logo-wrap" onclick="goToMain()" style="cursor:pointer;">
+    <img src="logo1.png" class="gnb-logo-sketch" alt="더 비경">
+    <img src="logo1_.png" class="gnb-logo-script" alt="더 비경">
+  </div>
+  <div class="gnb-menu-wrap">
+    <button class="gnb-menu" onclick="openMenu()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- MENU OVERLAY -->
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-top">
+    <button class="menu-close" onclick="closeMenu()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <nav class="menu-nav" id="menuNav">
+    <!-- 객실 항목 -->
+    <div class="menu-item" id="menuItemRooms" onclick="toggleMenuRooms()">
+      <span>객실</span>
+      <span class="menu-item-en">ROOMS</span>
+    </div>
+    <!-- 객실 아코디언 패널 -->
+    <div class="menu-rooms-panel" id="menuRoomsPanel">
+      <div class="menu-rooms-inner" id="menuRoomsInner"></div>
+    </div>
+    <div class="menu-item" id="menuItemSpecial" onclick="openSpecialFromMenu()">
+      <span>스페셜</span>
+      <span class="menu-item-en">SPECIAL</span>
+    </div>
+    <!-- 스페셜 아코디언 패널 -->
+    <div class="menu-sp-panel" id="menuSpPanel">
+      <div class="menu-sp-inner" id="menuSpInner"></div>
+    </div>
+    <div class="menu-item" id="menuItemGallery" onclick="openGalleryOverlay()">갤러리<span class="menu-item-en">GALLERY</span></div>
+    <div class="menu-item" id="menuItemResv" onclick="toggleMenuResv()">
+      <span>예약</span>
+      <span class="menu-item-en">RESERVATION</span>
+    </div>
+    <div class="menu-resv-panel" id="menuResvPanel">
+      <div class="menu-sp-inner" id="menuResvInner">
+        <div class="menu-sp-item" onclick="openResvGuide()">
+          <div class="menu-sp-info"><div class="menu-sp-name">예약안내</div><div class="menu-sp-en">RESERVATION GUIDE</div></div>
+          <div class="menu-sp-arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+        <div class="menu-sp-item" onclick="window.open('https://digitalnow.co.kr/booking/stepA1/thebgyeong','_blank')">
+          <div class="menu-sp-info"><div class="menu-sp-name">실시간예약</div><div class="menu-sp-en">ONLINE BOOKING</div></div>
+          <div class="menu-sp-arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="menu-item" id="menuItemTravel" onclick="openTravelOverlay()">주변여행지<span class="menu-item-en">NEARBY</span></div>
+    <div class="menu-item">인스타그램<span class="menu-item-en">INSTAGRAM</span></div>
+  </nav>
+  <div class="menu-addr" id="menuAddr"></div>
+</div>
+
+<!-- ROOM TYPE OVERLAY -->
+<div class="room-type-overlay" id="roomTypeOverlay">
+  <div class="rto-header">
+    <div>
+      <div class="rto-title-main">객실</div>
+      <div class="rto-title">ROOMS</div>
+    </div>
+    <button class="rto-close" onclick="openMenu()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </div>
+  <div class="rto-body" id="rtoBody"></div>
+</div>
+
+<!-- ROOM LIST OVERLAY -->
+<div class="room-list-overlay" id="roomListOverlay">
+  <!-- GNB -->
+  <nav class="gnb rlo-gnb">
+    <div class="gnb-logo-wrap" onclick="goToMain()" style="cursor:pointer;">
+      <img src="logo1_.png" class="gnb-logo-overlay" alt="더 비경">
+    </div>
+    <button class="gnb-menu" onclick="openMenu()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </nav>
+  <!-- 타입 헤더 -->
+  <div class="rlo-type-header">
+    <div class="rlo-type-header-bg"></div>
+    <div class="rlo-type-header-inner">
+      <div class="rlo-header-top-row">
+        <img class="rlo-header-logo" id="rloHeaderLogo" src="" alt=""/>
+        <div class="rlo-header-info">
+          <div class="rlo-header-name" id="rloHeaderName"></div>
+          <div class="rlo-header-en" id="rloHeaderEn"></div>
+        </div>
+      </div>
+      <div class="rlo-header-desc" id="rloHeaderDesc"></div>
+    </div>
+  </div>
+  <div class="rlo-body" id="rloBody"></div>
+  <!-- 푸터 -->
+  <footer class="site-footer rlo-footer" id="rloFooter">
+    <div class="ft-logo" id="rloFtLogo"></div>
+    <div class="ft-info" id="rloFtInfo"></div>
+    <div class="ft-copy">COPYRIGHT &copy; THE BGYEONG &middot; ALL RIGHTS RESERVED</div>
+  </footer>
+  <!-- 바텀바 -->
+  <div class="rlo-bottom-bar">
+    <button class="bottom-reserve" onclick="window.open('https://booking.naver.com/booking/13/bizes/1151531','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      예약하기
+    </button>
+    <div class="bottom-insta" onclick="window.open('https://www.instagram.com/thebgyeong/','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="#1a1a1a" stroke="none"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- SPECIAL LIST OVERLAY -->
+<div class="sp-list-overlay" id="spListOverlay">
+  <nav class="gnb splo-gnb">
+    <div class="gnb-logo-wrap" onclick="goToMain()" style="cursor:pointer;">
+      <img src="logo1_.png" class="gnb-logo-overlay" alt="더 비경">
+    </div>
+    <button class="gnb-menu" onclick="openMenu()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </nav>
+  <div class="splo-header">
+    <div class="splo-header-title">스페셜</div>
+    <div class="splo-header-sub">SPECIAL THINGS</div>
+  </div>
+  <div class="splo-body" id="sploBody"></div>
+  <div class="splo-bottom-bar">
+    <button class="bottom-reserve" onclick="window.open('https://booking.naver.com/booking/13/bizes/1151531','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      예약하기
+    </button>
+    <div class="bottom-insta" onclick="window.open('https://www.instagram.com/thebgyeong/','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="#1a1a1a" stroke="none"/></svg>
+    </div>
+  </div>
+</div>
+<!-- SPECIAL OVERLAY -->
+<!-- RESERVATION GUIDE OVERLAY -->
+<div class="resv-guide-overlay" id="resvGuideOverlay">
+  <nav class="gnb slo-gnb">
+    <div class="gnb-logo-wrap" onclick="goToMain()" style="cursor:pointer;">
+      <img src="logo1_.png" class="gnb-logo-overlay" alt="더 비경">
+    </div>
+    <button class="gnb-menu" onclick="openMenu()"><svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg></button>
+  </nav>
+  <div class="resv-guide-body" id="resvGuideBody">
+    <div class="resv-guide-loading">로딩 중...</div>
+  </div>
+  <div class="resv-guide-footer">
+    <button class="resv-agree-btn" id="resvAgreeBtn" onclick="openOnlineBooking()">예약 내용을 확인하였습니다 &mdash; 실시간 예약하기</button>
+  </div>
+</div>
+
+<div class="special-overlay" id="specialOverlay">
+  <!-- GNB -->
+  <nav class="gnb slo-gnb">
+    <div class="gnb-logo-wrap" onclick="goToMain()" style="cursor:pointer;">
+      <img src="logo1_.png" class="gnb-logo-overlay" alt="더 비경">
+    </div>
+    <button class="gnb-menu" onclick="openMenu()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </nav>
+  <!-- 헤더 -->
+  <div class="slo-header">
+    <div class="slo-header-title">스페셜</div>
+    <div class="slo-header-sub">SPECIAL THINGS</div>
+  </div>
+  <!-- 목차 -->
+  <div class="slo-toc" id="sloToc"></div>
+  <!-- 콘텐츠 -->
+  <div class="slo-body" id="sloBody"></div>
+  <!-- 푸터 -->
+  <footer class="site-footer slo-footer" id="sloFooter">
+    <div class="ft-logo" id="sloFtLogo"></div>
+    <div class="ft-info" id="sloFtInfo"></div>
+    <div class="ft-copy">COPYRIGHT &copy; THE BGYEONG &middot; ALL RIGHTS RESERVED</div>
+  </footer>
+  <!-- 바텀바 -->
+  <div class="slo-bottom-bar">
+    <button class="bottom-reserve" onclick="window.open('https://booking.naver.com/booking/13/bizes/1151531','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      예약하기
+    </button>
+    <div class="bottom-insta" onclick="window.open('https://www.instagram.com/thebgyeong/','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="#1a1a1a" stroke="none"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY OVERLAY -->
+<div class="special-overlay" id="galleryOverlay">
+  <!-- GNB -->
+  <nav class="gnb slo-gnb">
+    <div class="gnb-logo-wrap" onclick="goToMain()" style="cursor:pointer;">
+      <img src="logo1_.png" class="gnb-logo-overlay" alt="더 비경">
+    </div>
+    <button class="gnb-menu" onclick="openMenu()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </nav>
+  <!-- 헤더 -->
+  <div class="slo-header">
+    <div class="slo-header-title">갤러리</div>
+    <div class="slo-header-sub">GALLERY</div>
+  </div>
+  <!-- 갤러리 그리드 -->
+  <div class="gallery-grid" id="galleryGrid"></div>
+  <!-- 바텀바 -->
+  <div class="slo-bottom-bar">
+    <button class="bottom-reserve" onclick="window.open('https://booking.naver.com/booking/13/bizes/1151531','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      예약하기
+    </button>
+    <div class="bottom-insta" onclick="window.open('https://www.instagram.com/thebgyeong/','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="#1a1a1a" stroke="none"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY LIGHTBOX (body 직속, transform 영향 없음) -->
+<div class="gallery-lightbox" id="galleryLightbox">
+  <button class="glb-close" onclick="closeLightbox()">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <button class="glb-prev" onclick="lightboxMove(-1)">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="glb-img-wrap">
+    <img class="glb-img" id="glbImg" src="" alt="gallery"/>
+  </div>
+  <button class="glb-next" onclick="lightboxMove(1)">
+    <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <div class="glb-counter" id="glbCounter"></div>
+</div>
+
+<!-- TRAVEL OVERLAY -->
+<div class="special-overlay" id="travelOverlay">
+  <!-- GNB -->
+  <nav class="gnb slo-gnb">
+    <div class="gnb-logo-wrap" onclick="goToMain()" style="cursor:pointer;">
+      <img src="logo1_.png" class="gnb-logo-overlay" alt="더 비경">
+    </div>
+    <button class="gnb-menu" onclick="openMenu()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </nav>
+  <!-- 헤더 -->
+  <div class="slo-header">
+    <div class="slo-header-title">주변여행지</div>
+    <div class="slo-header-sub">NEARBY ATTRACTIONS</div>
+  </div>
+  <!-- 목차 -->
+  <div class="slo-toc" id="travelToc"></div>
+  <!-- 콘텐츠 -->
+  <div class="slo-body" id="travelBody"><div class="resv-guide-loading">로딩 중...</div></div>
+  <!-- 푸터 -->
+  <footer class="site-footer slo-footer" id="travelFooter">
+    <div class="ft-logo" id="travelFtLogo"></div>
+    <div class="ft-info" id="travelFtInfo"></div>
+    <div class="ft-copy">COPYRIGHT &copy; THE BGYEONG &middot; ALL RIGHTS RESERVED</div>
+  </footer>
+  <!-- 바텀바 -->
+  <div class="slo-bottom-bar">
+    <button class="bottom-reserve" onclick="openResvGuide()">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      예약하기
+    </button>
+    <div class="bottom-insta" onclick="window.open('https://www.instagram.com/thebgyeong/','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="#1a1a1a" stroke="none"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- HERO SLIDER -->
+<div class="hero-wrap">
+  <div class="hero-slider-outer" id="heroOuter">
+    <div class="hero-slides" id="heroSlides"></div>
+    <!-- prev peek button -->
+    <div class="hero-prev-peek" id="heroPrevPeek" onclick="heroPrev()" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </div>
+  </div>
+  <div class="hero-dots" id="heroDots"></div>
+</div>
+
+<!-- SPECIAL SECTION -->
+<div class="sec-hd">
+  <div class="sec-hd-left">
+    <div class="sec-hd-title">더 비경의<br><span>3가지 프라이빗 스테이</span></div>
+  </div>
+</div>
+
+<!-- 3타입 탭 -->
+<div class="room-type-tabs" id="roomTypeTabs"></div>
+
+<div class="sp-grid-outer" id="roomGridOuter">
+  <div class="sp-grid-slides" id="spSlides"></div>
+</div>
+<div class="sp-dots" id="spDots"></div>
+
+<!-- ACTION BUTTONS -->
+<div class="action-wrap">
+  <!-- 공식예약할인 -->
+  <div class="action-top">
+    <div class="action-top-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+    </div>
+    <div class="action-top-body">
+      <div class="action-top-label">OFFICIAL BOOKING</div>
+      <div class="action-top-title">공식 예약 할인 &nbsp;—&nbsp; 최대 10% + 웰컴 기프트</div>
+    </div>
+    <svg class="action-top-arr" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+  </div>
+  <!-- 3열 -->
+  <div class="action-mid">
+    <div class="action-cell">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div class="action-cell-title">예약하기</div>
+    </div>
+    <div class="action-cell" onclick="window.open('https://www.instagram.com/thebgyeong/','_blank')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="#3a3530" stroke="none"/></svg>
+      <div class="action-cell-title">인스타그램</div>
+    </div>
+    <div class="action-cell" onclick="window.location.href='tel:01094297070'">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.07 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      <div class="action-cell-title">전화하기</div>
+    </div>
+  </div>
+  <!-- 단지배치도 -->
+  <div class="action-bot" onclick="openMapOverlay()">
+    <div class="action-bot-icon">
+      <svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+    </div>
+    <div class="action-bot-body">
+      <div class="action-bot-label">SITE MAP</div>
+      <div class="action-bot-title">단지 배치도</div>
+    </div>
+    <svg class="action-bot-arr" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+  </div>
+</div>
+
+<!-- 단지배치도 오버레이 -->
+<div class="map-overlay" id="mapOverlay">
+  <!-- GNB -->
+  <nav class="map-gnb">
+    <div class="map-gnb-logo-wrap" onclick="goToMain()" style="cursor:pointer;">
+      <img src="logo1_.png" class="map-gnb-logo-img" alt="더 비경">
+    </div>
+    <button class="map-gnb-close" onclick="openMenu()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </nav>
+  <!-- 헤더 -->
+  <div class="map-header">
+    <div class="map-header-title">단지 배치도</div>
+    <div class="map-header-sub">SITE MAP</div>
+  </div>
+  <!-- 안내 -->
+  <div class="map-hint">드래그하여 지도를 이동할 수 있습니다</div>
+  <!-- 캔버스 영역 -->
+  <div class="map-canvas-wrap" id="mapCanvasWrap">
+    <div class="map-canvas" id="mapCanvas">
+      <img src="https://gonylab-image.com/thebgyeong/room/room_set.jpg" alt="단지 배치도" id="mapBgImg"/>
+      <!-- 마커들 -->
+    </div>
+  </div>
+  <!-- 범례 -->
+  <div class="map-legend">
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#7ec8a0"></div>풀빌라</div>
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#c8a87e"></div>프라이빗빌라</div>
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#4a9eff"></div>수영장</div>
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#e87878"></div>공용시설</div>
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#c878e8"></div>기타</div>
+  </div>
+</div>
+
+<!-- BRAND COPY -->
+<div class="brand-copy">
+  <div class="brand-copy-leaf">
+    <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19.82A1 1 0 005 21C9 21 14.5 18 17 8z"/><path d="M3.82 19.82L12 12"/></svg>
+  </div>
+  <div class="brand-copy-text">조용한 자연, 온전한 쉼.<br>가족을 위한 프라이빗 스테이,</div>
+  <div class="brand-copy-name">더 비경</div>
+</div>
+
+<!-- 영상 섹션 -->
+<section class="video-section">
+  <div class="video-wrap">
+    <video id="bgVideo" class="video-player" playsinline></video>
+  </div>
+</section>
+
+<!-- 푸터 -->
+<footer class="site-footer" id="mainFooter">
+  <div class="ft-logo" id="mainFtLogo"></div>
+  <div class="ft-info" id="mainFtInfo"></div>
+  <div class="ft-copy">COPYRIGHT &copy; THE BGYEONG &middot; ALL RIGHTS RESERVED</div>
+</footer>
+
+<div class="pb-bar"></div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar" id="mainBottomBar">
+  <button class="bottom-reserve" onclick="openResvGuide()">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    예약하기
+  </button>
+  <div class="bottom-insta" onclick="window.open('https://www.instagram.com/thebgyeong/','_blank')">
+    <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="#1a1a1a" stroke="none"/></svg>
+  </div>
+</div>
+
+<!-- ROOM BOTTOM SHEET -->
+<div class="rbs-dim" id="rbsDim" onclick="closeRoomBS()"></div>
+<div class="rbs-sheet" id="rbsSheet">
+  <div class="bs-handle"></div>
+  <div class="rbs-head">
+    <div>
+      <div class="rbs-ttl" id="rbsTtl"></div>
+      <div class="rbs-stl" id="rbsStl"></div>
+    </div>
+    <div class="rbs-x" onclick="closeRoomBS()"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+  </div>
+  <div class="rbs-slider">
+    <div class="rbs-slides" id="rbsSlides"></div>
+    <div class="rbs-dots" id="rbsDots"></div>
+    <button class="rbs-prev" id="rbsPrev"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <button class="rbs-next" id="rbsNext"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+    <div class="rbs-counter" id="rbsCounter">1 / 1</div>
+  </div>
+  <div class="rbs-tags" id="rbsTags"></div>
+  <div class="rbs-section">
+    <div class="rbs-section-title">객실 특징</div>
+    <ul class="rbs-pts" id="rbsPts"></ul>
+  </div>
+  <div class="rbs-section">
+    <div class="rbs-section-title">객실 정보</div>
+    <table class="rbs-tbl" id="rbsTbl"></table>
+  </div>
+  <div class="rbs-section">
+    <div class="rbs-section-title">시즌별 요금</div>
+    <table class="rbs-tbl" id="rbsPrice"></table>
+  </div>
+  <button class="rbs-cta" onclick="closeRoomBS()">예약하기 →</button>
+</div>
+
+<!-- BOTTOM SHEET -->
+<div class="bs-backdrop" id="bsBackdrop" onclick="closeBS()"></div>
+<div class="bs-sheet" id="bsSheet">
+  <div class="bs-handle"></div>
+  <img class="bs-img" id="bsImg" src="" alt=""/>
+  <div class="bs-body">
+    <div class="bs-cat" id="bsCat"></div>
+    <div class="bs-title" id="bsTitle"></div>
+    <div class="bs-desc" id="bsDesc"></div>
+    <div class="bs-tags" id="bsTags"></div>
+    <button class="bs-close-btn" onclick="closeBS()">닫기</button>
+  </div>
+</div>
+
+<script>
+// INTRO
+let iIdx2=0;
+const iSlides2=document.querySelectorAll('.intro-slide');
+setInterval(()=>{
+  iSlides2[iIdx2].classList.remove('on');
+  iIdx2=(iIdx2+1)%iSlides2.length;
+  iSlides2[iIdx2].classList.add('on');
+},3500);
+function enterMain(){
+  document.getElementById('intro').classList.add('hide');
+  // 메인 진입 시 히스토리 스택을 충분히 확보 → 뒤로가기 시 브라우저 종료 방지
+  history.replaceState({page:'main'},'',' ');
+  for(var i=0;i<10;i++) history.pushState({page:'main'},'',' ');
+}
+
+// 모바일 뒤로가기(popstate) 처리
+window.addEventListener('popstate',function(e){
+  // 바텀시트가 열려있으면 바텀시트만 닫고 객실목록 유지 (pushState 없음)
+  if(document.getElementById('rbsSheet')?.classList.contains('on')){
+    document.getElementById('rbsDim').classList.remove('on');
+    document.getElementById('rbsSheet').classList.remove('on');
+    _rbsFromOverlay = false;
+    document.body.style.overflow='hidden';
+    return;
+  }
+  // 객실목록이 열려있으면 닫고 타입 선택 화면으로
+  if(document.getElementById('roomListOverlay')?.classList.contains('open')){
+    document.getElementById('roomListOverlay').classList.remove('open');
+    // roomTypeOverlay가 열려있으면 그대로 유지, 아니면 메인으로
+    if(document.getElementById('roomTypeOverlay')?.classList.contains('open')){
+      document.body.style.overflow='hidden';
+    } else {
+      document.body.style.overflow='';
+      var mb=document.getElementById('mainBottomBar');if(mb)mb.style.display='';
+    }
+    return;
+  }
+  // 객실 타입 선택 화면이 열려있으면 닫고 메뉴 복원
+  if(document.getElementById('roomTypeOverlay')?.classList.contains('open')){
+    document.getElementById('roomTypeOverlay').classList.remove('open');
+    document.getElementById('menuOverlay').classList.add('open');
+    document.body.style.overflow='hidden';
+    var mb=document.getElementById('mainBottomBar');if(mb)mb.style.display='';
+    // 메뉴 객실 아코디언 펼치기
+    var roomPanel=document.getElementById('menuRoomsPanel');
+    var roomItem=document.getElementById('menuItemRooms');
+    if(roomPanel) roomPanel.classList.add('open');
+    if(roomItem) roomItem.classList.add('rooms-open');
+    return;
+  }
+  // 예약안내 오버레이가 열려있으면 닫고 GNB 예약 아코디언 복원
+  if(document.getElementById('resvGuideOverlay')?.classList.contains('open')){
+    document.getElementById('resvGuideOverlay').classList.remove('open');
+    document.body.style.overflow='hidden';
+    document.getElementById('menuOverlay').classList.add('open');
+    var resvPanel=document.getElementById('menuResvPanel');
+    var resvItem=document.getElementById('menuItemResv');
+    if(resvPanel) resvPanel.classList.add('open');
+    if(resvItem) resvItem.classList.add('sp-open');
+    return;
+  }
+  // 스페셔 상세가 열려있으면 닫고 스페셔 목록(GNB 펼쳐진 상태)로
+  if(document.getElementById('specialOverlay')?.classList.contains('open')){
+    document.getElementById('specialOverlay').classList.remove('open');
+    // GNB 메뉴 열고 스페셔 서브 펼치기
+    document.getElementById('menuOverlay').classList.add('open');
+    document.body.style.overflow='hidden';
+    var spItem=document.getElementById('menuItemSpecial');
+    var panel=document.getElementById('menuSpPanel');
+    if(spItem && panel){
+      panel.classList.add('open');
+      spItem.classList.add('rooms-open');
+    }
+    return;
+  }
+  // 갤러리 오버레이가 열려있으면 닫고 메인으로
+  if(document.getElementById('galleryOverlay')?.classList.contains('open')){
+    if(typeof closeLightbox==='function') closeLightbox();
+    document.getElementById('galleryOverlay').classList.remove('open');
+    document.body.style.overflow='';
+    var mb3=document.getElementById('mainBottomBar');if(mb3)mb3.style.display='';
+    return;
+  }
+  // 단지배치도 오버레이가 열려있으면 닫고 메인으로 복원
+  if(document.getElementById('mapOverlay')?.classList.contains('open')){
+    document.getElementById('mapOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    var mbMap=document.getElementById('mainBottomBar');if(mbMap)mbMap.style.display='';
+    return;
+  }
+  // 주변여행지 오버레이가 열려있으면 닫고 GNB 복원
+  if(document.getElementById('travelOverlay')?.classList.contains('open')){
+    document.getElementById('travelOverlay').classList.remove('open');
+    document.getElementById('menuOverlay').classList.add('open');
+    document.body.style.overflow='hidden';
+    return;
+  }
+  // 스페셔 목록(GNB)이 열려있으면 닫고 메인으로
+  if(document.getElementById('spListOverlay')?.classList.contains('open')){
+    document.getElementById('spListOverlay').classList.remove('open');
+    document.body.style.overflow='';
+    var mb2=document.getElementById('mainBottomBar');if(mb2)mb2.style.display='';
+    return;
+  }
+  // 그 외 모든 오버레이 닫고 메인으로
+  closeMenu();
+  document.body.style.overflow='';
+  var mb=document.getElementById('mainBottomBar');if(mb)mb.style.display='';
+});
+
+// GNB scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('gnb').classList.toggle('scrolled',window.scrollY>10);
+});
+
+// Menu
+function goToMain(){
+  // 모든 오버레이 닫기
+  var overlays=['menuOverlay','roomListOverlay','roomTypeOverlay','specialOverlay','galleryOverlay','travelOverlay','resvGuideOverlay','spListOverlay','mapOverlay'];
+  overlays.forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.classList.remove('open');
+  });
+  // 아코디언 전부 닫기
+  document.getElementById('menuRoomsPanel')?.classList.remove('open');
+  document.getElementById('menuItemRooms')?.classList.remove('rooms-open');
+  document.getElementById('menuSpPanel')?.classList.remove('open');
+  document.getElementById('menuItemSpecial')?.classList.remove('sp-open','rooms-open');
+  document.getElementById('menuResvPanel')?.classList.remove('open');
+  document.getElementById('menuItemResv')?.classList.remove('sp-open');
+  // 스크롤 해제 및 바텀바 복원
+  document.body.style.overflow='';
+  var mb=document.getElementById('mainBottomBar');
+  if(mb) mb.style.display='';
+  // 메인 페이지 최상단으로 스크롤
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function openMenu(){
+  // 현재 열려있는 서브 오버레이를 모두 닫고 메뉴 열기
+  var overlays=['roomListOverlay','roomTypeOverlay','specialOverlay','galleryOverlay','travelOverlay','resvGuideOverlay','spListOverlay','mapOverlay'];
+  overlays.forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.classList.remove('open');
+  });
+  document.getElementById('menuOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  // 메뉴 오버레이 자체도 최상단으로 스크롤
+  var mo=document.getElementById('menuOverlay');
+  if(mo) mo.scrollTop=0;
+  history.pushState({page:'main',layer:'menu'},'',' ');
+}
+function closeMenu(){
+  document.getElementById('menuOverlay').classList.remove('open');
+  document.getElementById('menuRoomsPanel').classList.remove('open');
+  document.getElementById('menuItemRooms').classList.remove('rooms-open');
+  document.getElementById('menuSpPanel')?.classList.remove('open');
+  document.getElementById('menuItemSpecial')?.classList.remove('sp-open');
+  document.getElementById('menuItemSpecial')?.classList.remove('rooms-open');
+  document.getElementById('menuResvPanel')?.classList.remove('open');
+  document.getElementById('menuItemResv')?.classList.remove('sp-open');
+  document.getElementById('travelOverlay')?.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// Room type tab switch — scroll-snap 방식
+const roomTypeRanges=[
+  {start:0,count:5},
+  {start:5,count:3},
+  {start:8,count:4}
+];
+let currentTabIdx=0;
+function switchSpTab(idx){
+  currentTabIdx=idx;
+  document.querySelectorAll('.room-type-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  const outer=document.getElementById('roomGridOuter');
+  const cards=document.querySelectorAll('.sp-card');
+  if(!cards.length)return;
+  const r=roomTypeRanges[idx];
+  // 해당 타입 첫 번째 카드로 스크롤
+  const targetCard=cards[r.start];
+  outer.scrollTo({left:targetCard.offsetLeft-16,behavior:'smooth'});
+  // 도트 업데이트
+  const dots=document.getElementById('spDots');
+  dots.innerHTML=Array.from({length:r.count},(_,i)=>`<div class="sp-dot${i===0?' active':''}"></div>`).join('');
+}
+
+// scroll 이벤트로 탭 + 도트 자동 업데이트
+document.addEventListener('DOMContentLoaded',()=>{
+  const outer=document.getElementById('roomGridOuter');
+  if(!outer)return;
+  outer.addEventListener('scroll',()=>{
+    const cards=document.querySelectorAll('.sp-card');
+    if(!cards.length)return;
+    const scrollLeft=outer.scrollLeft;
+    // 현재 보이는 카드 인덱스 계산
+    let visibleIdx=0;
+    cards.forEach((c,i)=>{
+      if(c.offsetLeft-16<=scrollLeft+10) visibleIdx=i;
+    });
+    // 탭 업데이트
+    let newTabIdx=0;
+    roomTypeRanges.forEach((r,i)=>{
+      if(visibleIdx>=r.start) newTabIdx=i;
+    });
+    if(newTabIdx!==currentTabIdx){
+      currentTabIdx=newTabIdx;
+      document.querySelectorAll('.room-type-tab').forEach((t,i)=>t.classList.toggle('active',i===newTabIdx));
+      const r=roomTypeRanges[newTabIdx];
+      const dots=document.getElementById('spDots');
+      dots.innerHTML=Array.from({length:r.count},(_,i)=>`<div class="sp-dot"></div>`).join('');
+    }
+    // 도트 업데이트
+    const r=roomTypeRanges[currentTabIdx];
+    const relIdx=visibleIdx-r.start;
+    document.querySelectorAll('#spDots .sp-dot').forEach((d,i)=>d.classList.toggle('active',i===relIdx));
+  },{passive:true});
+  // 초기화는 initApp() 완료 후 renderRoomCards() 내에서 수행
+});
+
+// Hero slider
+let heroIdx=0;
+let heroTotal=6;
+function heroRender(){
+  document.getElementById('heroSlides').style.transform=`translateX(-${heroIdx*100}%)`;
+  document.querySelectorAll('.hero-dot').forEach((d,i)=>d.classList.toggle('active',i===heroIdx));
+  document.getElementById('heroPrevPeek').style.display=heroIdx>0?'flex':'none';
+}
+function heroNext(){heroIdx=(heroIdx+1)%heroTotal;heroRender()}
+function heroPrev(){heroIdx=(heroIdx-1+heroTotal)%heroTotal;heroRender()}
+function heroGo(i){heroIdx=i;heroRender()}
+
+// Auto hero
+setInterval(heroNext,4000);
+
+// Room card swipe: scroll-snap CSS가 처리 (별도 JS 불필요)
+
+// Touch swipe for hero
+(function(){
+  const el=document.getElementById('heroOuter');
+  let sx=0,sy=0,locked=null;
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;locked=null;},{passive:true});
+  el.addEventListener('touchmove',e=>{
+    if(locked===null){
+      const dx=Math.abs(e.touches[0].clientX-sx);
+      const dy=Math.abs(e.touches[0].clientY-sy);
+      locked=dx>dy?'h':'v';
+    }
+    if(locked==='h') e.preventDefault();
+  },{passive:false});
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx;
+    if(locked==='h'&&Math.abs(dx)>40){
+      if(dx<0)heroNext();
+      else heroPrev();
+    }
+  },{passive:true});
+})();
+
+/* ===== API 연동 데이터 (initApp에서 채워짐) ===== */
+const API_BASE='https://digitalnow.co.kr/reserve/pensionInfo/thebgyeong/';
+let _apiData={n4:null,n5:null,n8:null,n9:null,n15:null};
+
+async function fetchAPI(n){
+  try{
+    const r=await fetch(API_BASE+n);
+    const j=await r.json();
+    return Array.isArray(j)?j:(j.data||j.list||j.result||[]);
+  }catch(e){console.warn('API n='+n+' 실패',e);return [];}
+}
+
+function fmtPrice(v){
+  if(!v)return '';
+  return '₩'+Number(v).toLocaleString();
+}
+
+async function initApp(){
+  // 병렬 호출
+  const [n4,n5,n8,n9,n10,n15]=await Promise.all([
+    fetchAPI(4),fetchAPI(5),fetchAPI(8),fetchAPI(9),fetchAPI(10),fetchAPI(15)
+  ]);
+  _apiData={n4,n5,n8,n9,n10,n15};
+
+  // ── 업체정보 (n=4) ──
+  const biz=Array.isArray(n4)?n4[0]:n4;
+  if(biz){
+    const nm=biz.BUSI_NM||'더 비경';
+    const tel=biz.USER_TEL1||'';
+    const addr=biz.NEW_USER_ADDR||biz.USER_ADDR||'';
+    const rep=biz.BUSI_PRE_NM||'';
+    const bno=biz.BUSI_NO||'';
+    const ftHtml=`<b>대표</b> ${rep}&nbsp;&nbsp;<b>사업자등록번호</b> ${bno}<br><b>주소</b> ${addr}<br><b>Tel</b> ${tel}`;
+    ['mainFtLogo','rloFtLogo','sloFtLogo'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.textContent=nm+' · THE BGYEONG';
+    });
+    ['mainFtInfo','rloFtInfo','sloFtInfo'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.innerHTML=ftHtml;
+    });
+    // 메뉴 주소/전화
+    const ma=document.getElementById('menuAddr');
+    if(ma)ma.innerHTML=addr+'<br>Tel. '+tel;
+  }
+
+  // ── 요금표 (n=5) ── ROOM_CODE 기준 맵 생성
+  const priceMap={};
+  (Array.isArray(n5)?n5:[]).forEach(p=>{
+    priceMap[p.ROOM_CODE]=p;
+  });
+
+  // ── 객실 타입 (n=15) ──
+  const types=Array.isArray(n15)?n15:[];
+  // ── 객실 상세 (n=8) ──
+  const rooms=Array.isArray(n8)?n8:[];
+  // SORT_NO 기준 정렬
+  rooms.sort((a,b)=>(+a.SORT_NO||0)-(+b.SORT_NO||0));
+
+  // rbsData 동적 생성
+  rooms.forEach(r=>{
+    const imgBase='https://gonylab-image.com/thebgyeong/room/'+(r.SORT_NO||1)+'/';
+    const roomImgCounts={1:12,2:12,3:12,4:12,5:12,6:12,7:12,8:12,9:8,10:9,11:12,12:12};
+    const imgCount=roomImgCounts[+(r.SORT_NO||1)]||12;
+    const imgs=Array.from({length:imgCount},(_,k)=>imgBase+(k+1)+'.jpg');
+    const p=priceMap[r.ROOM_CODE]||{};
+    // 요금 행 생성
+    const priceRows=[];
+    if(p.P01_WEEK_PRCE)priceRows.push(['평일',fmtPrice(p.P01_WEEK_PRCE),'normal']);
+    if(p.P01_FRD_PRCE)priceRows.push(['금요일',fmtPrice(p.P01_FRD_PRCE),'normal']);
+    if(p.P01_SAT_PRCE)priceRows.push(['토요일',fmtPrice(p.P01_SAT_PRCE),'high']);
+    if(p.P01_SUN_PRCE)priceRows.push(['일요일',fmtPrice(p.P01_SUN_PRCE),'normal']);
+    // 태그 생성 (TYPE_NAME 기준)
+    const typeName=r.TYPE_NAME||'';
+    const tags=[r.TYPE_NM||''];
+    if(r.ADLT_BASE_PERS)tags.push(r.ADLT_BASE_PERS+'~'+r.ADLT_MAX_PERS+'인');
+    if(typeName.includes('풀빌라'))tags.push('온수풀');
+    else if(typeName.includes('스파'))tags.push('스파');
+    // 특징 포인트 (ROOM_TYPE 쉼표 분리)
+    const pts=[];
+    if(r.ROOM_TYPE){r.ROOM_TYPE.split(',').forEach(function(s){var t=s.trim();if(t)pts.push(t);});}
+    // 정보 테이블
+    const info=[['타입',typeName||r.TYPE_NM||''],
+                ['기준인원',(r.ADLT_BASE_PERS||'-')+'인'],
+                ['최대인원',(r.ADLT_MAX_PERS||'-')+'인']];
+    if(biz&&biz.CHECK_IN)info.push(['체크인',(biz.CHECK_IN||'').toString().padStart(2,'0')+':00']);
+    if(biz&&biz.CHECK_OUT)info.push(['체크아웃',(biz.CHECK_OUT||'').toString().padStart(2,'0')+':00']);
+    rbsData['r_'+r.SORT_NO]={
+      ttl:r.TYPE_NM||'',
+      stl:r.TYPE_NM_EN||r.ASSIST_CONTENT||'',
+      imgs,tags,pts,info,price:priceRows,
+      roomCode:r.ROOM_CODE,
+      typeName:typeName
+    };
+  });
+
+  // roomTypeConfig 동적 생성 (n=15 기반, TYPE_NAME 매칭)
+  roomTypeConfig.length=0;
+  const logoFiles=['logo_pool_villa.png','logo_spa_villa.png','logo_private_villa.png'];
+  if(types.length>0){
+    types.forEach((t,i)=>{
+      // n=8의 TYPE_NAME이 n=15의 TYPE_NAME과 일치하는 것 필터
+      const tName=t.TYPE_NAME||'';
+      const typeRooms=rooms.filter(r=>{
+        const rTypeName=r.TYPE_NAME||'';
+        return rTypeName===tName||(rTypeName.replace(/\s/g,'')===(tName.replace(/\s/g,'')));
+      });
+      roomTypeConfig.push({
+        typeIdx:i,
+        name:tName,
+        logo:logoFiles[i]||'',
+        logoAlt:t.TYPE_DESC||tName,
+        desc:t.TYPE_DESC||'',
+        keys:typeRooms.map(r=>'r_'+r.SORT_NO)
+      });
+    });
+  }
+  // fallback: n=15 없거나 매칭 실패 시 SORT_NO 기준 분류
+  if(roomTypeConfig.length===0||roomTypeConfig.every(c=>c.keys.length===0)){
+    roomTypeConfig.length=0;
+    const names=['풀빌라','스파빌라','프라이빗 빌라'];
+    const ranges=[[1,5],[6,8],[9,12]];
+    ranges.forEach(([s,e],i)=>{
+      const typeRooms=rooms.filter(r=>+r.SORT_NO>=s&&+r.SORT_NO<=e);
+      roomTypeConfig.push({
+        typeIdx:i,name:names[i],logo:logoFiles[i],logoAlt:names[i],desc:'',
+        keys:typeRooms.map(r=>'r_'+r.SORT_NO)
+      });
+    });
+  }
+
+  // roomTypeRanges 재계산
+  let offset=0;
+  roomTypeRanges.length=0;
+  roomTypeConfig.forEach(cfg=>{
+    roomTypeRanges.push({start:offset,count:cfg.keys.length});
+    offset+=cfg.keys.length;
+  });
+
+  // ── 렌더링 ──
+  renderMenuAccordion();
+  renderMenuSpecial();
+  renderRoomTypeTabs();
+  renderRoomCards();
+  renderHeroSlides(n9);
+  renderSpecialOverlay(n9);
+  renderTravelOverlay(n10);
+  // 초기 탭
+  switchSpTab(0);
+
+  // ── URL 해시 기반 직접 접근 처리 ──
+  // 예: index2.html#room-숲, index2.html#room-아침 등
+  const hash=decodeURIComponent(window.location.hash.replace('#',''));
+  if(hash){
+    // 인트로 건너뛰기
+    const intro=document.getElementById('intro');
+    if(intro) intro.classList.add('hide');
+    history.replaceState({page:'main'},'',' ');
+    for(var i=0;i<10;i++) history.pushState({page:'main'},'',' ');
+
+    if(hash.startsWith('room-')){
+      const roomName=hash.replace('room-','');
+      // 해당 객실 키 찾기
+      const roomKey=Object.keys(rbsData).find(k=>rbsData[k]?.ttl===roomName||k===roomName);
+      if(roomKey){
+        setTimeout(()=>openRoomBS(roomKey),300);
+      }
+    } else if(hash==='gallery'){
+      setTimeout(()=>openGalleryOverlay(),300);
+    } else if(hash==='special'){
+      setTimeout(()=>{
+        document.getElementById('menuOverlay').classList.add('open');
+        document.body.style.overflow='hidden';
+        var spItem=document.getElementById('menuItemSpecial');
+        var panel=document.getElementById('menuSpPanel');
+        if(spItem&&panel){panel.classList.add('open');spItem.classList.add('rooms-open');}
+      },300);
+    } else if(hash==='travel'){
+      setTimeout(()=>openTravelOverlay(),300);
+    } else if(hash==='reservation'){
+      setTimeout(()=>{
+        document.getElementById('menuOverlay').classList.add('open');
+        document.body.style.overflow='hidden';
+        var resvPanel=document.getElementById('menuResvPanel');
+        var resvItem=document.getElementById('menuItemResv');
+        if(resvPanel) resvPanel.classList.add('open');
+        if(resvItem) resvItem.classList.add('sp-open');
+      },300);
+    }
+  }
+}
+
+// ── 메뉴 아코디언 타입 카드 렌더링 ──
+function renderMenuAccordion(){
+  const container=document.getElementById('menuRoomsInner');
+  if(!container)return;
+  container.innerHTML=roomTypeConfig.map((cfg,i)=>{
+    const roomNames=cfg.keys.map(k=>rbsData[k]?.ttl||'').filter(Boolean);
+    const firstKey=cfg.keys[0];
+    const roomNum=rbsData[firstKey]?.imgs?.[0]?.match(/room\/([^/]+)\//)?.[1]||(i+1);
+    const thumb='https://gonylab-image.com/thebgyeong/room/'+roomNum+'/1.jpg';
+    return `
+      <div class="menu-type-card" onclick="openRoomTypeOverlay(${i})">
+        <img class="menu-type-img" src="${thumb}" alt="${cfg.name}" loading="lazy"/>
+        <div class="menu-type-body">
+          <div class="menu-type-logo-row">
+            <div class="menu-type-name">${cfg.name}</div>
+          </div>
+          <div class="menu-type-rooms-row">${roomNames.map(n=>`<span class="menu-type-room-tag">${n}</span>`).join('')}</div>
+        </div>
+        <div class="menu-type-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── 메인 객실 타입 탭 렌더링 ──
+function renderRoomTypeTabs(){
+  const container=document.getElementById('roomTypeTabs');
+  if(!container)return;
+  container.innerHTML=roomTypeConfig.map((cfg,i)=>`
+    <div class="room-type-tab${i===0?' active':''}" onclick="switchSpTab(${i})">
+      <img class="room-type-tab-logo" src="${cfg.logo}" alt="${cfg.name}"/>
+      <div class="room-type-tab-name">${cfg.name}</div>
+    </div>
+  `).join('');
+}
+
+// ── 메인 객실 카드 렌더링 ──
+function renderRoomCards(){
+  const container=document.getElementById('spSlides');
+  if(!container)return;
+  const allKeys=roomTypeConfig.flatMap(cfg=>cfg.keys);
+  container.innerHTML=allKeys.map(k=>{
+    const d=rbsData[k];
+    if(!d)return '';
+    return `
+      <div class="sp-card" onclick="openRoomBS('${k}')">
+        <img class="sp-card-img" src="${d.imgs[0]}" alt="${d.ttl}" loading="lazy"/>
+        <div class="sp-card-overlay"></div>
+        <div class="sp-card-body">
+          <div class="sp-card-title">${d.ttl}</div>
+          <div class="sp-card-sub">${d.stl}</div>
+        </div>
+        <div class="sp-card-arr"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+    `;
+  }).join('');
+  // 도트 초기화
+  const dots=document.getElementById('spDots');
+  if(dots&&roomTypeRanges[0]){
+    dots.innerHTML=Array.from({length:roomTypeRanges[0].count},(_,i)=>`<div class="sp-dot${i===0?' active':''}"></div>`).join('');
+  }
+}
+
+// ── 히어로 슬라이드 렌더링 (n=9 스페셜 이미지) ──
+function renderHeroSlides(specials){
+  const slidesEl=document.getElementById('heroSlides');
+  const dotsEl=document.getElementById('heroDots');
+  if(!slidesEl)return;
+  // 스페셜 이미지 + 객실 대표 이미지 혼합
+  const heroItems=[];
+  // 스페셜 항목에서 이미지 있는 것
+  (specials||[]).forEach((s,i)=>{
+    const img=s.IMAGE_URL||(s.IMG_URL)||('https://gonylab-image.com/thebgyeong/special/'+(i+1)+'/1.jpg');
+    heroItems.push({img,title:s.TITLE_KR||'',sub:s.TITLE_EN||'',spIdx:i});
+  });
+  // 최대 6개
+  const items=heroItems.slice(0,6);
+  if(!items.length){
+    // fallback: 객실 이미지
+    const allKeys=roomTypeConfig.flatMap(cfg=>cfg.keys).slice(0,6);
+    allKeys.forEach(k=>{
+      const d=rbsData[k];
+      if(d)items.push({img:d.imgs[0],title:d.ttl,sub:d.stl});
+    });
+  }
+  heroTotal=items.length;
+  slidesEl.innerHTML=items.map((it,i)=>`
+    <div class="hero-slide">
+      <img class="hero-slide-img" src="${it.img}" alt="${it.title}" loading="lazy"/>
+      <div class="hero-slide-overlay"></div>
+      <div class="hero-slide-body">
+        <div class="hero-title">${it.title}</div>
+        <div class="hero-desc">${it.sub}</div>
+        ${it.spIdx!==undefined?`<button class="hero-btn" onclick="openSpecialDetail(${it.spIdx})">자세히 보기 <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>`:''}
+      </div>
+    </div>
+  `).join('');
+  if(dotsEl)dotsEl.innerHTML=items.map((_,i)=>`<div class="hero-dot${i===0?' active':''}" onclick="heroGo(${i})"></div>`).join('');
+  heroIdx=0;
+  heroRender();
+}
+
+// ── 스페셜 오버레이 렌더링 (n=9) ──
+function renderSpecialOverlay(specials){
+  const toc=document.getElementById('sloToc');
+  const body=document.getElementById('sloBody');
+  const listBody=document.getElementById('sploBody');
+  if(!toc||!body)return;
+  const items=Array.isArray(specials)?specials:[];
+  // 스페셜 목록 오버레이 렌더링 (세로형 카드 + 이미지 슬라이드)
+  const spImgCountsForList=[1,6,7,5,4,7,1,4,3];
+  if(listBody){
+    listBody.innerHTML=items.map((s,i)=>{
+      const name=s.TITLE_KR||'';
+      const en=s.TITLE_EN||'';
+      const cnt=spImgCountsForList[i]||1;
+      const base='https://gonylab-image.com/thebgyeong/special/'+(i+1)+'/';
+      const imgs=Array.from({length:cnt},(_,k)=>base+(k+1)+'.jpg');
+      const slideHtml=cnt>1
+        ?`<div class="splo-card-slides" id="splo-slides-${i}" data-spidx="${i}" data-total="${cnt}" data-cur="0">
+            <div class="splo-card-track" id="splo-track-${i}">${imgs.map(src=>`<div class="splo-card-slide"><img src="${src}" alt="${name}" loading="lazy"/></div>`).join('')}</div>
+            <div class="splo-card-dots" id="splo-dots-${i}">${imgs.map((_,si)=>`<span class="splo-cdot${si===0?' active':''}" onclick="event.stopPropagation();sploSlideTo(${i},${si})"></span>`).join('')}</div>
+          </div>`
+        :`<div class="splo-card-img-wrap"><img src="${imgs[0]}" alt="${name}" loading="lazy"/></div>`;
+      return `
+        <div class="splo-card-item" onclick="openSpecialDetail(${i})">
+          ${slideHtml}
+          <div class="splo-card-meta">
+            <div class="splo-card-name">${name}</div>
+            <div class="splo-card-en">${en}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    // 터치+마우스 드래그 스와이프 이벤트 등록
+    listBody.querySelectorAll('.splo-card-slides').forEach(function(el){
+      var track=el.querySelector('.splo-card-track');
+      var dragging=false,sx=0,sy=0,locked=null,startOffset=0;
+
+      function dragStart(clientX,clientY){
+        dragging=true;
+        sx=clientX; sy=clientY; locked=null;
+        startOffset=(parseInt(el.dataset.cur)||0)*el.offsetWidth;
+        if(track){track.style.transition='none';}
+      }
+      function dragMove(clientX,clientY){
+        if(!dragging)return;
+        if(locked===null){
+          var adx=Math.abs(clientX-sx);
+          var ady=Math.abs(clientY-sy);
+          if(adx>5||ady>5) locked=adx>=ady?'h':'v';
+        }
+        if(locked==='h'){
+          var diff=clientX-sx;
+          if(track){track.style.transform='translateX(-'+(startOffset-diff)+'px)';}
+        }
+      }
+      function dragEnd(clientX){
+        if(!dragging)return;
+        dragging=false;
+        if(track){track.style.transition='';}
+        if(locked!=='h'){sploSlideTo(parseInt(el.dataset.spidx),parseInt(el.dataset.cur)||0);return;}
+        var diff=clientX-sx;
+        var spIdx=parseInt(el.dataset.spidx);
+        var total=parseInt(el.dataset.total);
+        var cur=parseInt(el.dataset.cur)||0;
+        if(diff<-40&&cur<total-1){cur++;}
+        else if(diff>40&&cur>0){cur--;}
+        sploSlideTo(spIdx,cur);
+      }
+
+      // 터치
+      el.addEventListener('touchstart',function(e){
+        dragStart(e.touches[0].clientX,e.touches[0].clientY);
+      },{passive:true});
+      el.addEventListener('touchmove',function(e){
+        var adx=Math.abs(e.touches[0].clientX-sx);
+        var ady=Math.abs(e.touches[0].clientY-sy);
+        if(locked===null && (adx>5||ady>5)){
+          locked=adx>=ady?'h':'v';
+        }
+        if(locked==='h'){
+          e.preventDefault();
+          var diff=e.touches[0].clientX-sx;
+          if(track){track.style.transform='translateX(-'+(startOffset-diff)+'px)';}
+        }
+      },{passive:false});
+      el.addEventListener('touchend',function(e){dragEnd(e.changedTouches[0].clientX);},{passive:true});
+
+      // 마우스
+      el.addEventListener('mousedown',function(e){
+        e.preventDefault();
+        dragStart(e.clientX,e.clientY);
+        function onMove(e){dragMove(e.clientX,e.clientY);}
+        function onUp(e){dragEnd(e.clientX);document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);}
+        document.addEventListener('mousemove',onMove);
+        document.addEventListener('mouseup',onUp);
+      });
+    });
+  }
+  toc.innerHTML=items.map((s,i)=>{
+    const id='slo-item-'+i;
+    return `<button class="slo-toc-btn" onclick="scrollToSpecial('${id}')">${s.TITLE_KR||''}</button>`;
+  }).join('');
+  body.innerHTML=items.map((s,i)=>{
+    const id='slo-item-'+i;
+    const spImgCounts=[10,6,7,5,4,7,1,4,3];
+    const spImgCount=spImgCounts[i]||1;
+    const spImgBase='https://gonylab-image.com/thebgyeong/special/'+(i+1)+'/';
+    const spImgs=Array.from({length:spImgCount},(_,k)=>spImgBase+(k+1)+'.jpg');
+    const img=s.IMAGE_URL||s.IMG_URL||spImgs[0];
+    const cat=s.TITLE_EN||'';
+    const title=s.TITLE_KR||'';
+    // CONTENT(메인 설명) + CONTENT1~4(서브 설명) 모두 연동
+    const descParts=[s.CONTENT,s.CONTENT1,s.CONTENT2,s.CONTENT3,s.CONTENT4].filter(Boolean);
+    const desc=descParts.join('<br><br>');
+    const tags=[s.TITLE_KR].filter(Boolean);
+    // 이미지 슬라이드 HTML 생성
+    const imgSlideHtml=spImgs.length>1
+      ? `<div class="slo-item-slides" id="slo-slides-${i}">
+          <div class="slo-slides-track" id="slo-track-${i}">${spImgs.map((src,si)=>`<div class="slo-slide"><img src="${src}" alt="${title}" loading="lazy"/></div>`).join('')}</div>
+          <div class="slo-slides-dots">${spImgs.map((_,si)=>`<span class="slo-sdot${si===0?' active':''}" onclick="slideSloTo(${i},${si})"></span>`).join('')}</div>
+        </div>`
+      : `<div class="slo-item-img"><img src="${img}" alt="${title}" loading="lazy"/></div>`;
+    return `
+      <div class="slo-item" id="${id}">
+        ${imgSlideHtml}
+        <div class="slo-item-cat">${cat}</div>
+        <div class="slo-item-title">${title}</div>
+        <div class="slo-item-desc">${desc}</div>
+        <div class="slo-item-tags">${tags.join(' · ')}</div>
+      </div>
+      <div class="slo-divider"></div>
+    `;
+  }).join('');
+
+  // 터치 스와이프 이벤트 등록
+  body.querySelectorAll('.slo-item-slides').forEach(function(el){
+    var track=el.querySelector('.slo-slides-track');
+    if(!track)return;
+    var spIdx=parseInt(el.id.replace('slo-slides-',''));
+    var total=el.querySelectorAll('.slo-slide').length;
+    var sx=0,sy=0,locked=null,startOffset=0;
+
+    el.addEventListener('touchstart',function(e){
+      var t=e.touches[0];
+      sx=t.clientX; sy=t.clientY; locked=null;
+      startOffset=parseInt(track.dataset.cur||'0')*el.offsetWidth;
+      track.style.transition='none';
+    },{passive:true});
+
+    el.addEventListener('touchmove',function(e){
+      var t=e.touches[0];
+      var dx=t.clientX-sx, dy=t.clientY-sy;
+      if(locked===null) locked=Math.abs(dx)>Math.abs(dy)?'h':'v';
+      if(locked==='h'){
+        e.preventDefault();
+        track.style.transform='translateX(-'+(startOffset-dx)+'px)';
+      }
+    },{passive:false});
+
+    el.addEventListener('touchend',function(e){
+      var dx=e.changedTouches[0].clientX-sx;
+      track.style.transition='';
+      var cur=parseInt(track.dataset.cur||'0');
+      if(locked==='h'){
+        if(dx<-40&&cur<total-1) slideSloTo(spIdx,cur+1);
+        else if(dx>40&&cur>0) slideSloTo(spIdx,cur-1);
+        else slideSloTo(spIdx,cur);
+      }
+      locked=null;
+    },{passive:true});
+  });
+}
+
+// ── 주변여행지 오버레이 렌더링 (n=10) ──
+function renderTravelOverlay(travels){
+  const toc=document.getElementById('travelToc');
+  const body=document.getElementById('travelBody');
+  if(!toc||!body)return;
+  const items=Array.isArray(travels)?travels:[];
+  if(items.length===0){
+    body.innerHTML='<div class="resv-guide-loading">데이터를 불러올 수 없습니다.</div>';
+    return;
+  }
+  // 목차 렌더링
+  toc.innerHTML=items.map((t,i)=>{
+    const id='travel-item-'+i;
+    return `<button class="slo-toc-btn" onclick="scrollToTravel('${id}')">${t.TITLE||''}</button>`;
+  }).join('');
+  // 콘텐츠 렌더링
+  body.innerHTML=items.map((t,i)=>{
+    const id='travel-item-'+i;
+    const title=t.TITLE||'';
+    const desc=t.CONTENT||'';
+    const distance=t.DISTANCE||'';
+    // 이미지: 서버에 없으면 지도 아이콘 플레이스홀더 표시
+    const imgUrl=t.IMAGE_URL||('https://gonylab-image.com/thebgyeong/travel/'+(i+1)+'.jpg');
+    const imgHtml=`<div class="slo-item-img"><img src="${imgUrl}" alt="${title}" loading="lazy" onerror="this.parentElement.style.display='none'"/></div>`;
+    return `
+      <div class="slo-item" id="${id}">
+        ${imgHtml}
+        <div class="travel-item-meta">
+          <span class="travel-item-distance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#b4915a" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+            차량 ${distance}
+          </span>
+        </div>
+        <div class="slo-item-title">${title}</div>
+        <div class="slo-item-desc">${desc}</div>
+      </div>
+      <div class="slo-divider"></div>
+    `;
+  }).join('');
+  // 푸터 데이터 동기화
+  const biz=_apiData&&_apiData.n4?(_apiData.n4[0]||_apiData.n4):null;
+  if(biz){
+    const nm=biz.BUSI_NM||'더 비경';
+    const tel=biz.USER_TEL1||'';
+    const addr=biz.NEW_USER_ADDR||biz.USER_ADDR||'';
+    const rep=biz.BUSI_PRE_NM||'';
+    const bno=biz.BUSI_NO||'';
+    const ftLogo=document.getElementById('travelFtLogo');
+    const ftInfo=document.getElementById('travelFtInfo');
+    if(ftLogo)ftLogo.textContent=nm+' · THE BGYEONG';
+    if(ftInfo)ftInfo.innerHTML=`<b>대표</b> ${rep}&nbsp;&nbsp;<b>사업자등록번호</b> ${bno}<br><b>주소</b> ${addr}<br><b>Tel</b> ${tel}`;
+  }
+}
+
+/* ===== 갤러리 ===== */
+(function(){
+  var GALLERY_BASE='https://gonylab-image.com/thebgyeong/gallery/';
+  var GALLERY_COUNT=16;
+  var _imgs=[];
+  var _cur=0;
+  var _lbTouchX=0;
+
+  function buildGallery(){
+    var grid=document.getElementById('galleryGrid');
+    if(grid.children.length>0)return; // 이미 렌더링됨
+    _imgs=[];
+    var html='';
+    for(var i=1;i<=GALLERY_COUNT;i++){
+      var src=GALLERY_BASE+i+'.jpg';
+      _imgs.push(src);
+      html+='<div class="gallery-item" data-idx="'+(i-1)+'" onclick="__glbOpen('+(i-1)+')"><img src="'+src+'" alt="gallery '+i+'" loading="lazy" onerror="this.parentElement.style.display=\'none\'"/></div>';
+    }
+    grid.innerHTML=html;
+  }
+
+  window.__glbOpen=function(idx){
+    _cur=idx;
+    document.getElementById('glbImg').src=_imgs[_cur];
+    document.getElementById('glbCounter').textContent=(_cur+1)+' / '+_imgs.length;
+    var lb=document.getElementById('galleryLightbox');
+    lb.classList.add('open');
+    lb.scrollTop=0;
+    document.body.style.overflow='hidden';
+    // 터치 스와이프
+    lb.addEventListener('touchstart',_lbTouchStart,{passive:true});
+    lb.addEventListener('touchend',_lbTouchEnd,{passive:true});
+  };
+
+  function _lbTouchStart(e){_lbTouchX=e.touches[0].clientX;}
+  function _lbTouchEnd(e){
+    var dx=e.changedTouches[0].clientX-_lbTouchX;
+    if(Math.abs(dx)>40) window.lightboxMove(dx<0?1:-1);
+  }
+
+  window.lightboxMove=function(dir){
+    _cur=(_cur+dir+_imgs.length)%_imgs.length;
+    var img=document.getElementById('glbImg');
+    img.style.opacity='0';
+    setTimeout(function(){
+      img.src=_imgs[_cur];
+      document.getElementById('glbCounter').textContent=(_cur+1)+' / '+_imgs.length;
+      img.style.opacity='1';
+    },120);
+  };
+
+  window.closeLightbox=function(){
+    var lb=document.getElementById('galleryLightbox');
+    lb.classList.remove('open');
+    lb.removeEventListener('touchstart',_lbTouchStart);
+    lb.removeEventListener('touchend',_lbTouchEnd);
+    document.body.style.overflow='hidden'; // 갤러리 오버레이는 유지
+  };
+
+  window.openGalleryOverlay=function(){
+    closeMenu();
+    buildGallery();
+    var ov=document.getElementById('galleryOverlay');
+    ov.classList.add('open');
+    document.body.style.overflow='hidden';
+    history.pushState({layer:'gallery'},'','');
+  };
+
+  window.closeGalleryOverlay=function(){
+    closeLightbox();
+    var ov=document.getElementById('galleryOverlay');
+    ov.classList.remove('open');
+    document.body.style.overflow='';
+    document.getElementById('menuOverlay').classList.add('open');
+    document.body.style.overflow='hidden';
+  };
+
+  // 라이트박스 이미지 페이드 스타일
+  document.addEventListener('DOMContentLoaded',function(){
+    var img=document.getElementById('glbImg');
+    if(img) img.style.transition='opacity .12s ease';
+  });
+})();
+
+function openTravelOverlay(){
+  closeMenu();
+  const ov=document.getElementById('travelOverlay');
+  ov.classList.add('open');
+  ov.scrollTop=0;
+  document.body.style.overflow='hidden';
+  history.pushState({layer:'travel'},'','');
+}
+
+function closeTravelOverlay(){
+  const ov=document.getElementById('travelOverlay');
+  ov.classList.remove('open');
+  document.body.style.overflow='';
+  // GNB를 주변여행지 메뉴 하이라이트 상태로 복원
+  document.getElementById('menuOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function scrollToTravel(id){
+  const el=document.getElementById(id);
+  const overlay=document.getElementById('travelOverlay');
+  if(!el||!overlay)return;
+  const tocH=overlay.querySelector('.slo-toc')?overlay.querySelector('.slo-toc').offsetHeight:0;
+  const gnbH=overlay.querySelector('.gnb')?overlay.querySelector('.gnb').offsetHeight:0;
+  const headerH=overlay.querySelector('.slo-header')?overlay.querySelector('.slo-header').offsetHeight:0;
+  const top=el.offsetTop-(gnbH+headerH+tocH+8);
+  overlay.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+}
+
+// initApp 실행
+initApp();
+
+// Bottom sheet data
+const bsData={
+  pool:{
+    img:'pool.webp',
+    cat:'POOL',
+    title:'32도 온수수영장,\n사계절 따뜻한 힐링',
+    desc:'입실 후부터 밤 10시까지 32도로 유지되는 온수풀. 숲과 산이 어우러진 인피니티 뷰 속에서 사계절 내내 프라이빗 수영을 즐길 수 있다. 키디풀과 사우나까지 갖춘 온 가족이 함께하기에도 완벽하다.',
+    tags:['수영장','사우나','키디풀','입실 후 ~ 22:00']
+  },
+  lounge:{
+    img:'https://gonylab-image.com/thebgyeong/special/5/1.jpg',
+    cat:'LOUNGE',
+    title:'라운지 봄',
+    desc:'봄처럼 따뜻하고 포근한 공용 라운지. 로비와 자판기를 갖춰 체크인부터 늦은 밤까지 편안하게 이용할 수 있다.',
+    tags:['라운지','로비','자판기']
+  },
+  terrace:{
+    img:'https://gonylab-image.com/thebgyeong/special/2/1.jpg',
+    cat:'TERRACE',
+    title:'테라스돔',
+    desc:'유리 온실 형태의 오렌저리와 별빛 아래 감성적인 야외 공간 별가라. 사계절 다른 매력을 선사한다.',
+    tags:['오렌저리','별가라']
+  },
+  apresmidi:{
+    img:'aphremidi.webp',
+    cat:'OUTDOOR',
+    title:'아프레미디',
+    desc:'오후의 여유를 뜻하는 이름처럼, 전망대에서 바라보는 예천의 풍경과 피크닉존, 스파에어리어가 어우러진 야외 공간.',
+    tags:['전망대','피크닉존','스파에어리어']
+  },
+  fire:{
+    img:'https://gonylab-image.com/thebgyeong/special/3/1.jpg',
+    cat:'OUTDOOR',
+    title:'불멍',
+    desc:'화로대 앞에 앉아 타오르는 불꽃을 바라보며 하루의 피로를 내려놓는 시간. 자연 속 가장 원초적인 힐링.',
+    tags:['화로대','야외']
+  },
+  stepping:{
+    img:'https://gonylab-image.com/thebgyeong/special/4/1.jpg',
+    cat:'NATURE',
+    title:'징검다리',
+    desc:'예천의 자연 속을 걸는 산책 코스. 낙동강변을 따라 펼쳐지는 풍경과 함께하는 조용한 산책의 시간.',
+    tags:['산책','자연','낙동강변']
+  }
+};
+
+function openBS(key){
+  const d=bsData[key];
+  if(!d)return;
+  document.getElementById('bsImg').src=d.img;
+  document.getElementById('bsCat').textContent=d.cat;
+  document.getElementById('bsTitle').textContent=d.title;
+  document.getElementById('bsDesc').textContent=d.desc;
+  document.getElementById('bsTags').innerHTML=d.tags.map(t=>`<span class="bs-tag">${t}</span>`).join('');
+  document.getElementById('bsBackdrop').classList.add('open');
+  document.getElementById('bsSheet').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeBS(){
+  document.getElementById('bsBackdrop').classList.remove('open');
+  document.getElementById('bsSheet').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ===== 객실 바텀시트 데이터 & 함수 ===== */
+// API initApp()에서 동적으로 채워짐
+const rbsData={};
+
+let rbsIdx2=0,rbsTotal2=0;
+function updateRbs(){
+  document.getElementById('rbsSlides').style.transform=`translateX(-${rbsIdx2*100}%)`;
+  document.getElementById('rbsCounter').textContent=`${rbsIdx2+1} / ${rbsTotal2}`;
+  document.querySelectorAll('.rbs-dot').forEach((d,i)=>d.classList.toggle('on',i===rbsIdx2));
+}
+function openRoomBS(k){
+  const d=rbsData[k];if(!d)return;
+  document.getElementById('rbsTtl').textContent=d.ttl;
+  document.getElementById('rbsStl').textContent=d.stl;
+  document.getElementById('rbsTags').innerHTML=d.tags.map(t=>`<span class="rbs-tag">${t}</span>`).join('');
+  document.getElementById('rbsPts').innerHTML=d.pts.map(p=>`<li>${p}</li>`).join('');
+  document.getElementById('rbsTbl').innerHTML=d.info.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+  const lbl={peak:`<span class="rbs-lbl rbs-lbl-peak">피크</span>`,high:`<span class="rbs-lbl rbs-lbl-high">성수기</span>`,normal:`<span class="rbs-lbl rbs-lbl-normal">일반</span>`};
+  document.getElementById('rbsPrice').innerHTML=d.price.map(([s,p,t])=>`<tr class="${t==='peak'?'rbs-price-peak':''}"><td>${s}${lbl[t]||''}</td><td>${p}</td></tr>`).join('');
+  rbsTotal2=d.imgs.length;rbsIdx2=0;
+  document.getElementById('rbsSlides').innerHTML=d.imgs.map(src=>`<div class="rbs-slide"><img src="${src}" alt="" loading="lazy"/></div>`).join('');
+  document.getElementById('rbsDots').innerHTML=d.imgs.map((_,i)=>`<div class="rbs-dot${i===0?' on':''}"></div>`).join('');
+  document.getElementById('rbsSlides').style.transform='translateX(0)';
+  document.getElementById('rbsCounter').textContent=`1 / ${rbsTotal2}`;
+  document.getElementById('rbsPrev').onclick=()=>{if(rbsIdx2>0){rbsIdx2--;updateRbs();}};
+  document.getElementById('rbsNext').onclick=()=>{if(rbsIdx2<rbsTotal2-1){rbsIdx2++;updateRbs();}};
+  const sl=document.getElementById('rbsSlides');let tx2=0;
+  sl.addEventListener('touchstart',e=>{tx2=e.touches[0].clientX;},{passive:true});
+  sl.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx2;if(dx<-40&&rbsIdx2<rbsTotal2-1){rbsIdx2++;updateRbs();}else if(dx>40&&rbsIdx2>0){rbsIdx2--;updateRbs();}},{passive:true});
+  document.getElementById('rbsDim').classList.add('on');
+  document.getElementById('rbsSheet').classList.add('on');
+  document.body.style.overflow='hidden';
+  history.pushState({page:'main',layer:'roomBS'},'',' ');
+}
+function closeRoomBS(){
+  document.getElementById('rbsDim').classList.remove('on');
+  document.getElementById('rbsSheet').classList.remove('on');
+  if(_rbsFromOverlay){
+    _rbsFromOverlay = false;
+    // 객실 목록 오버레이가 열려있으면 그대로 유지, 스크롤만 막기
+    document.body.style.overflow='hidden';
+  } else {
+    document.body.style.overflow='';
+  }
+}
+
+// ===== 예약 메뉴 아코디언 =====
+function toggleMenuResv(){
+  const panel=document.getElementById('menuResvPanel');
+  const item=document.getElementById('menuItemResv');
+  const isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open',!isOpen);
+  item.classList.toggle('sp-open',!isOpen);
+  if(!isOpen) history.pushState({layer:'menuResv'},'','');
+}
+
+function openResvGuide(){
+  closeMenu();
+  const ov=document.getElementById('resvGuideOverlay');
+  ov.classList.add('open');
+  ov.scrollTop=0;
+  document.body.style.overflow='hidden';
+  history.pushState({layer:'resvGuide'},'','');
+  renderResvGuide();
+}
+
+function closeResvGuide(){
+  const ov=document.getElementById('resvGuideOverlay');
+  ov.classList.remove('open');
+  document.body.style.overflow='';
+  // GNB를 예약 아코디언 펼친 상태로 복원
+  const menuOv=document.getElementById('menuOverlay');
+  const panel=document.getElementById('menuResvPanel');
+  const item=document.getElementById('menuItemResv');
+  menuOv.classList.add('open');
+  document.body.style.overflow='hidden';
+  panel.classList.add('open');
+  item.classList.add('sp-open');
+}
+
+function openOnlineBooking(){
+  window.open('https://digitalnow.co.kr/booking/stepA1/thebgyeong','_blank');
+}
+
+async function renderResvGuide(){
+  const body=document.getElementById('resvGuideBody');
+  body.innerHTML='<div class="resv-guide-loading">로딩 중...</div>';
+  try{
+    const [r1,r2,r3]=await Promise.all([
+      fetch('https://digitalnow.co.kr/reserve/pensionInfo/thebgyeong/1').then(r=>r.json()),
+      fetch('https://digitalnow.co.kr/reserve/pensionInfo/thebgyeong/2').then(r=>r.json()),
+      fetch('https://digitalnow.co.kr/reserve/pensionInfo/thebgyeong/3').then(r=>r.json())
+    ]);
+    const d1=r1.result||[];
+    const d2=r2.result||[];
+    const d3=r3.result||[];
+    let html='';
+    // 예약 주의사항 (n=2)
+    if(d2.length){
+      html+='<div class="resv-guide-section">';
+      html+='<div class="resv-guide-section-title">예약 주의사항</div>';
+      d2.forEach(item=>{
+        const txt=(item.CNCL_COMM||'').replace(/\n/g,'<br>');
+        if(txt) html+='<div class="resv-guide-item">'+txt+'</div>';
+      });
+      html+='</div>';
+    }
+    // 입실 안내 (n=3)
+    if(d3.length){
+      html+='<div class="resv-guide-section">';
+      html+='<div class="resv-guide-section-title">입실 안내 및 주의사항</div>';
+      d3.forEach(item=>{
+        const txt=(item.ENTR_COMM||'').replace(/\n/g,'<br>');
+        if(txt) html+='<div class="resv-guide-item">'+txt+'</div>';
+      });
+      html+='</div>';
+    }
+    // 환불 규정 (n=1)
+    if(d1.length){
+      html+='<div class="resv-guide-section">';
+      html+='<div class="resv-guide-section-title">환불 규정</div>';
+      html+='<table class="resv-refund-table"><thead><tr><th>취소 시점</th><th>위약금</th><th>환불액</th></tr></thead><tbody>';
+      d1.forEach(item=>{
+        const day=parseInt(item.STD_DAY||'0');
+        let dayLabel;
+        if(day===0) dayLabel='당일 취소';
+        else if(day>=1000) dayLabel=(d1.length>1?parseInt(d1[d1.length-2].STD_DAY)+1:11)+'일 이상 전';
+        else dayLabel=day+'일 전';
+        html+='<tr><td>'+dayLabel+'</td><td>'+(item.CNCL_COMS||'0')+'%</td><td>'+(item.REFU_PRCE||'0')+'%</td></tr>';
+      });
+      html+='</tbody></table>';
+      html+='</div>';
+    }
+    body.innerHTML=html||'<div class="resv-guide-loading">데이터가 없습니다.</div>';
+  }catch(e){
+    body.innerHTML='<div class="resv-guide-loading">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+  }
+}
+
+// ===== 메뉴 객실 아코디언 =====
+function toggleMenuSpecial(){
+  const panel=document.getElementById('menuSpPanel');
+  const item=document.getElementById('menuItemSpecial');
+  const isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open',!isOpen);
+  item.classList.toggle('rooms-open',!isOpen);
+}
+function renderMenuSpecial(){
+  const container=document.getElementById('menuSpInner');
+  if(!container)return;
+  const items=(_apiData&&_apiData.n9)?_apiData.n9:[];
+  container.innerHTML=items.map((s,i)=>{
+    const img=s.IMAGE_URL||s.IMG_URL||('https://gonylab-image.com/thebgyeong/special/'+(i+1)+'/1.jpg');
+    const name=s.TITLE_KR||'';
+    const en=s.TITLE_EN||'';
+    return `
+      <div class="menu-sp-item" onclick="openSpecialDetailFromMenu(${i})">
+        <div class="menu-sp-thumb"><img src="${img}" alt="${name}" loading="lazy"/></div>
+        <div class="menu-sp-info">
+          <div class="menu-sp-name">${name}</div>
+          <div class="menu-sp-en">${en}</div>
+        </div>
+        <div class="menu-sp-arr"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+    `;
+  }).join('');
+}
+function openSpecialDetailFromMenu(idx){
+  closeMenu();
+  document.getElementById('specialOverlay').classList.add('open');
+  document.getElementById('specialOverlay').scrollTop=0;
+  document.body.style.overflow='hidden';
+  var mb=document.getElementById('mainBottomBar');
+  if(mb)mb.style.display='none';
+  history.pushState({page:'main',layer:'specialDetail'},'',' ');
+  setTimeout(function(){
+    var id='slo-item-'+idx;
+    var el=document.getElementById(id);
+    if(!el)return;
+    var overlay=document.getElementById('specialOverlay');
+    var gnbH=overlay.querySelector('.slo-gnb')?overlay.querySelector('.slo-gnb').offsetHeight:0;
+    var hdrH=overlay.querySelector('.slo-header')?overlay.querySelector('.slo-header').offsetHeight:0;
+    var tocH=overlay.querySelector('.slo-toc')?overlay.querySelector('.slo-toc').offsetHeight:0;
+    overlay.scrollTo({top:el.getBoundingClientRect().top-overlay.getBoundingClientRect().top+overlay.scrollTop-(gnbH+hdrH+tocH)-8,behavior:'auto'});
+  },80);
+}
+function toggleMenuRooms(){
+  const panel=document.getElementById('menuRoomsPanel');
+  const item=document.getElementById('menuItemRooms');
+  const isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open',!isOpen);
+  item.classList.toggle('rooms-open',!isOpen);
+}
+
+// ===== 객실 타입 선택 오버레이 =====
+// API initApp()에서 동적으로 채워짐
+const roomTypeConfig=[];
+
+function openRoomTypeOverlay(preSelectIdx){
+  // rtoBody에 타입 카드 렌더링
+  const body=document.getElementById('rtoBody');
+  if(!body)return;
+  body.innerHTML=roomTypeConfig.map((cfg,i)=>{
+    const roomNames=cfg.keys.map(k=>rbsData[k]?.ttl||'').filter(Boolean);
+    const firstKey=cfg.keys[0];
+    const roomNum=rbsData[firstKey]?.imgs?.[0]?.match(/room\/([^/]+)\//)?.[1]||(i+1);
+    const thumb='https://gonylab-image.com/thebgyeong/room/'+roomNum+'/1.jpg';
+    return `
+      <div class="rto-type-card" onclick="openRoomListOverlay(${i})">
+        <img class="rto-type-img" src="${thumb}" alt="${cfg.name}" loading="lazy"/>
+        <div class="rto-type-body">
+          <img class="rto-type-logo" src="${cfg.logo}" alt="${cfg.name}"/>
+          <div class="rto-type-name">${cfg.name}</div>
+          <div class="rto-type-sub">${cfg.logoAlt||''}</div>
+          <div class="rto-type-rooms">${roomNames.map(n=>`<span class="rto-room-tag">${n}</span>`).join('')}</div>
+        </div>
+        <div class="rto-type-arrow"><span>객실 보기</span><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+    `;
+  }).join('');
+  // 메뉴 닫고 오버레이 열기
+  closeMenu();
+  document.getElementById('roomTypeOverlay').classList.add('open');
+  document.getElementById('roomTypeOverlay').scrollTop=0;
+  document.body.style.overflow='hidden';
+  var mb=document.getElementById('mainBottomBar');
+  if(mb) mb.style.display='none';
+  history.pushState({page:'main',layer:'roomType'},'',' ');
+  // preSelectIdx가 있으면 바로 해당 타입 목록으로
+  if(typeof preSelectIdx==='number' && preSelectIdx>=0){
+    setTimeout(()=>openRoomListOverlay(preSelectIdx),0);
+  }
+}
+function closeRoomTypeOverlay(){
+  document.getElementById('roomTypeOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  var mb=document.getElementById('mainBottomBar');
+  if(mb) mb.style.display='';
+}
+
+function openRoomListOverlay(typeIdx){
+  const cfg=roomTypeConfig[typeIdx];
+  if(!cfg)return;
+  // 헤더 업데이트
+  // 타입별 설명 문구
+  var typeDescMap={
+    '풀빌라':'\ub099동강이 내려다보이는 온수 풀을 품은 프라이빗 빌라. 자연 속에서 완전한 휴식을 누리세요.',
+    '스파빌라':'\uc2a4파와 사우나를 품은 프리미엄 빌라. 머실수록 가벼워지는 진정한 휴식을 경험하세요.',
+    '프라이빗 빌라':'\uc870용하고 독립적인 공간에서 오로지 우리만의 시간. 자연과 함께하는 프라이빗 스테이입니다.'
+  };
+  var typeEnMap={
+    '풀빌라':'PRIVATE POOL VILLA',
+    '스파빌라':'SPA VILLA',
+    '프라이빗 빌라':'PRIVATE VILLA'
+  };
+  document.getElementById('rloHeaderLogo').src=cfg.logo;
+  document.getElementById('rloHeaderLogo').alt=cfg.logoAlt;
+  document.getElementById('rloHeaderName').textContent=cfg.name;
+  document.getElementById('rloHeaderEn').textContent=typeEnMap[cfg.name]||cfg.logoAlt||'';
+  document.getElementById('rloHeaderDesc').textContent=typeDescMap[cfg.name]||cfg.desc||'';
+  // 카드 목록 생성
+  const body=document.getElementById('rloBody');
+  body.innerHTML=cfg.keys.map(k=>{
+    const d=rbsData[k];
+    if(!d)return '';
+    return `
+      <div class="rlo-room-card" onclick="openRoomBSFromOverlay('${k}')">
+        <img class="rlo-room-img" src="${d.imgs[0]}" alt="${d.ttl}" loading="lazy"/>
+        <div class="rlo-room-body">
+          <div class="rlo-room-title">${d.ttl}</div>
+          <div class="rlo-room-sub">${d.stl}</div>
+          <div class="rlo-room-tags">${d.tags.map(t=>`<span class="rlo-room-tag">${t}</span>`).join('')}</div>
+          <div class="rlo-room-cta">
+            <span>상세 보기 &amp; 예약</span>
+            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('roomListOverlay').classList.add('open');
+  document.getElementById('roomListOverlay').scrollTop=0;
+  document.body.style.overflow='hidden';
+  // 메인 바텀바 숨기기 (오버레이 위로 비었는 것 방지)
+  var mb = document.getElementById('mainBottomBar');
+  if(mb) mb.style.display='none';
+  history.pushState({page:'main',layer:'roomList'},'',' ');
+}
+function closeRoomListOverlay(){
+  document.getElementById('roomListOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  // 메인 바텀바 복원
+  var mb = document.getElementById('mainBottomBar');
+  if(mb) mb.style.display='';
+}
+function closeAllRoomOverlay(){
+  document.getElementById('roomListOverlay').classList.remove('open');
+  closeMenu();
+  document.body.style.overflow='';
+  // 메인 바텀바 복원
+  var mb = document.getElementById('mainBottomBar');
+  if(mb) mb.style.display='';
+}
+function openRoomBSFromOverlay(k){
+  _rbsFromOverlay = true;
+  // 오버레이는 닫지 않고 바텀시트만 위에 올림
+  openRoomBS(k);
+}
+// GNB 스페셜 클릭 시 바로 상세 오버레이 열기
+function openSpecialFromMenu(){
+  closeMenu();
+  document.getElementById('specialOverlay').classList.add('open');
+  document.getElementById('specialOverlay').scrollTop=0;
+  document.body.style.overflow='hidden';
+  var mb=document.getElementById('mainBottomBar');
+  if(mb)mb.style.display='none';
+  history.pushState({page:'main',layer:'specialDetail'},'',' ');
+}
+// 스페셜 목록 오버레이 열기 (메뉴 스페셜 클릭 시) - 레거시
+function openSpecialOverlay(){
+  closeMenu();
+  document.getElementById('spListOverlay').classList.add('open');
+  document.getElementById('spListOverlay').scrollTop=0;
+  document.body.style.overflow='hidden';
+  var mb=document.getElementById('mainBottomBar');
+  if(mb)mb.style.display='none';
+  history.pushState({page:'main',layer:'spList'},'',' ');
+}
+// 스페셜 목록 오버레이 닫기 (메뉴로 복귀)
+function backToMenuFromSp(){
+  document.getElementById('spListOverlay').classList.remove('open');
+  document.body.style.overflow='hidden';
+  document.getElementById('menuOverlay').classList.add('open');
+}
+// 스페셜 목록+상세 오버레이 모두 닫기 (X 버튼)
+function closeAllSpOverlay(){
+  document.getElementById('spListOverlay').classList.remove('open');
+  document.getElementById('specialOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  var mb=document.getElementById('mainBottomBar');
+  if(mb)mb.style.display='';
+}
+// 스페셜 상세에서 목록으로 돌아가기
+function backToSpList(){
+  document.getElementById('specialOverlay').classList.remove('open');
+  document.getElementById('spListOverlay').classList.add('open');
+  document.getElementById('spListOverlay').scrollTop=0;
+}
+// 스페셜 상세 오버레이 닫기 (X 버튼)
+function closeSpecialOverlay(){
+  document.getElementById('specialOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  var mb=document.getElementById('mainBottomBar');
+  if(mb)mb.style.display='';
+}
+// 스페셜 상세에서 뒤로 (< 버튼) → 메뉴로 복귀
+function closeSpecialToMenu(){
+  document.getElementById('specialOverlay').classList.remove('open');
+  document.body.style.overflow='hidden';
+  document.getElementById('menuOverlay').classList.add('open');
+}
+// 스페셜 항목 클릭 시: 목록 숨기고 상세 오버레이 열고 해당 항목으로 스크롤
+function openSpecialDetail(idx){
+  document.getElementById('spListOverlay').classList.remove('open');
+  document.getElementById('specialOverlay').classList.add('open');
+  document.getElementById('specialOverlay').scrollTop=0;
+  history.pushState({page:'main',layer:'specialDetail'},'',' ');
+  // 상세 오버레이를 열고 해당 idx로 스크롤
+  setTimeout(function(){
+    var id='slo-item-'+idx;
+    var el=document.getElementById(id);
+    if(!el)return;
+    var overlay=document.getElementById('specialOverlay');
+    var gnbH=overlay.querySelector('.slo-gnb')?overlay.querySelector('.slo-gnb').offsetHeight:0;
+    var hdrH=overlay.querySelector('.slo-header')?overlay.querySelector('.slo-header').offsetHeight:0;
+    var tocH=overlay.querySelector('.slo-toc')?overlay.querySelector('.slo-toc').offsetHeight:0;
+    var headerH=gnbH+hdrH+tocH;
+    var elTop=el.getBoundingClientRect().top - overlay.getBoundingClientRect().top + overlay.scrollTop;
+    overlay.scrollTo({top:elTop-headerH-8,behavior:'auto'});
+  },50);
+}
+function sploSlideTo(spIdx,slideIdx){
+  const slidesEl=document.getElementById('splo-slides-'+spIdx);
+  const track=document.getElementById('splo-track-'+spIdx);
+  if(!track||!slidesEl)return;
+  const w=slidesEl.offsetWidth;
+  track.style.transform='translateX(-'+(slideIdx*w)+'px)';
+  const dotsWrap=document.getElementById('splo-dots-'+spIdx);
+  if(dotsWrap){
+    dotsWrap.querySelectorAll('.splo-cdot').forEach(function(d,i){d.classList.toggle('active',i===slideIdx);});
+  }
+  slidesEl.dataset.cur=String(slideIdx);
+}
+function slideSloTo(spIdx,slideIdx){
+  var container=document.getElementById('slo-slides-'+spIdx);
+  var track=document.getElementById('slo-track-'+spIdx);
+  if(!track||!container)return;
+  var w=container.offsetWidth;
+  track.style.transform='translateX(-'+(slideIdx*w)+'px)';
+  track.dataset.cur=String(slideIdx);
+  var dots=document.querySelectorAll('#slo-slides-'+spIdx+' .slo-sdot');
+  dots.forEach(function(d,i){d.classList.toggle('active',i===slideIdx);});
+}
+function scrollToSpecial(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  var overlay=document.getElementById('specialOverlay');
+  var gnbH=overlay.querySelector('.slo-gnb')?overlay.querySelector('.slo-gnb').offsetHeight:0;
+  var hdrH=overlay.querySelector('.slo-header')?overlay.querySelector('.slo-header').offsetHeight:0;
+  var tocH=overlay.querySelector('.slo-toc')?overlay.querySelector('.slo-toc').offsetHeight:0;
+  var headerH=gnbH+hdrH+tocH;
+  var elTop=el.getBoundingClientRect().top - overlay.getBoundingClientRect().top + overlay.scrollTop;
+  overlay.scrollTo({top:elTop-headerH-8,behavior:'smooth'});
+}
+function backToMenu(){
+  document.getElementById('roomListOverlay').classList.remove('open');
+  document.body.style.overflow='hidden';
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+(function(){
+  var src = 'https://hls.midibus.kinxcdn.com/hls/ch_18f5912f/19f7eb0684f8af4b/v/playlist.m3u8';
+  var spinner = document.getElementById('introSpinner');
+  // 인트로 영상
+  var introVid = document.getElementById('introVideo');
+  // 재생 시작되면 스피너 숨김
+  introVid.addEventListener('playing', function(){
+    if(spinner) spinner.classList.add('hide');
+  });
+  // 버퍼링 중이면 스피너 다시 표시
+  introVid.addEventListener('waiting', function(){
+    if(spinner) spinner.classList.remove('hide');
+  });
+  if(Hls.isSupported()){
+    var hls1 = new Hls();
+    hls1.loadSource(src);
+    hls1.attachMedia(introVid);
+    hls1.on(Hls.Events.MANIFEST_PARSED, function(){
+      introVid.play().catch(function(){});
+    });
+  } else if(introVid.canPlayType('application/vnd.apple.mpegurl')){
+    introVid.src = src;
+    introVid.play().catch(function(){});
+  }
+  // 메인 영상 (새 URL, 사운드 포함, 스크롤 진입 시 자동재생)
+  var bgSrc = 'https://hls.midibus.kinxcdn.com/hls/ch_18f5912f/19f7e89fb0ee9f0f/v/playlist.m3u8';
+  var bgVid = document.getElementById('bgVideo');
+  var bgHls = null;
+
+  function initBgVideo(){
+    if(Hls.isSupported()){
+      bgHls = new Hls();
+      bgHls.loadSource(bgSrc);
+      bgHls.attachMedia(bgVid);
+    } else if(bgVid.canPlayType('application/vnd.apple.mpegurl')){
+      bgVid.src = bgSrc;
+    }
+  }
+
+  // IntersectionObserver: 화면에 50% 이상 보이면 재생, 벗어나면 정지
+  var bgObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        if(!bgHls && !bgVid.src) initBgVideo();
+        bgVid.play().catch(function(){});
+      } else {
+        bgVid.pause();
+      }
+    });
+  }, {threshold: 0.5});
+
+  bgObserver.observe(document.querySelector('.video-section'));
+})();
+
+// ===== 단지배치도 오버레이 =====
+(function(){
+  // 마커 데이터 (좌표: 이미지 너비 2048 기준 %)
+  // type: pool=수영장, villa=풀빌라, private=프라이빗빌라, facility=공용시설, common=기타
+  var MARKERS = [
+    {typeName:'풀빌라', name:'숲',  type:'villa',    x:26.1, y:35.2},
+    {typeName:'풀빌라', name:'아침',type:'villa',    x:31.7, y:34.4},
+    {typeName:'풀빌라', name:'달',  type:'villa',    x:37.1, y:26.4},
+    {typeName:'풀빌라', name:'하늘',type:'villa',    x:42.5, y:25.6},
+    {typeName:'풀빌라', name:'별',  type:'villa',    x:47.9, y:25.3},
+    {typeName:'스파빌라', name:'풀잎',type:'villa',    x:52.7, y:32.2, dir:'down'},
+    {typeName:'스파빌라', name:'이슬',type:'villa',    x:58.8, y:32.2, dir:'down'},
+    {typeName:'스파빌라', name:'노을',type:'villa',    x:65.5, y:32.9, dir:'down'},
+    {typeName:'프라이빗', name:'바람',type:'private', x:58.6, y:24.2},
+    {typeName:'프라이빗', name:'구름',type:'private', x:68.4, y:22.0},
+    {typeName:'프라이빗', name:'강',  type:'private', x:79.1, y:33.0},
+    {typeName:'프라이빗', name:'초원',type:'private', x:26.9, y:43.2, dir:'left'},
+    {label:'로비',       type:'facility', x:43.7, y:36.6, dir:'right'},
+    {label:'라운지 돔',  type:'facility', x:51.8, y:52.7, dir:'down'},
+    {label:'불멍',       type:'facility', x:48.3, y:43.2, dir:'right'},
+    {label:'아프레미디', type:'common',   x:78.1, y:47.9, dir:'down'},
+    {label:'징검다리',   type:'common',   x:54.9, y:83.6},
+    {label:'공용 온수수영장', type:'pool', x:66.5, y:43.3, dir:'down'},
+  ];
+
+  var _mapOpen = false;
+  var _mapInitialized = false;
+
+  window.openMapOverlay = function(){
+    closeMenu();
+    var ov = document.getElementById('mapOverlay');
+    ov.classList.add('open');
+    ov.scrollTop=0;
+    document.body.style.overflow = 'hidden';
+    history.pushState({layer:'map'},'','');
+    if(!_mapInitialized){
+      _mapInitialized = true;
+      initMapOverlay();
+    } else {
+      resetMapView();
+      animateMarkers();
+    }
+    _mapOpen = true;
+  };
+
+  window.closeMapOverlay = function(){
+    var ov = document.getElementById('mapOverlay');
+    ov.classList.remove('open');
+    document.body.style.overflow = '';
+    _mapOpen = false;
+    document.getElementById('menuOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  function initMapOverlay(){
+    var canvas = document.getElementById('mapCanvas');
+    var wrap = document.getElementById('mapCanvasWrap');
+    var img = document.getElementById('mapBgImg');
+
+    // 마커 생성
+    MARKERS.forEach(function(m, i){
+      var el = document.createElement('div');
+      el.className = 'map-marker type-' + m.type;
+      el.style.left = m.x + '%';
+      el.style.top = m.y + '%';
+      el.setAttribute('data-idx', i);
+      var dir = m.dir || 'up';
+      el.setAttribute('data-dir', dir);
+      el.classList.add('dir-' + dir);
+      var html;
+      if(m.typeName && m.name){
+        html = '<div class="map-marker-label">'+
+          '<span class="map-marker-type">' + m.typeName + '</span>'+
+          '<span class="map-marker-name">' + m.name + '</span>'+
+          '</div>';
+      } else {
+        html = '<div class="map-marker-label map-marker-label-sm">' + (m.label||'') + '</div>';
+      }
+      el.innerHTML = html;
+      canvas.appendChild(el);
+    });
+
+    // 이미지 로드 후 초기 위치 설정 + 마커 애니메이션
+    img.onload = function(){
+      resetMapView();
+      animateMarkers();
+    };
+    if(img.complete && img.naturalWidth > 0){
+      resetMapView();
+      animateMarkers();
+    }
+
+    // 드래그 패닝 (PC 마우스 + 모바일 터치)
+    setupDrag(wrap, canvas);
+  }
+
+  function resetMapView(){
+    var wrap = document.getElementById('mapCanvasWrap');
+    var canvas = document.getElementById('mapCanvas');
+    var img = document.getElementById('mapBgImg');
+    var wW = wrap.offsetWidth;
+    var wH = wrap.offsetHeight;
+    // 모바일: 200% 스케일, PC: 화면에 맞게
+    var scale = window.innerWidth <= 768 ? 2.0 : 1.0;
+    // 이미지 실제 크기
+    var imgW = img.naturalWidth || 2048;
+    var imgH = img.naturalHeight || 1365;
+    var ratio = imgH / imgW;
+    var canvasW = wW * scale;
+    var canvasH = canvasW * ratio;
+    canvas.style.width = canvasW + 'px';
+    canvas.style.height = canvasH + 'px';
+    img.style.width = '100%';
+    img.style.height = 'auto';
+    // 중앙 시작
+    var startX = (wW - canvasW) / 2;
+    var startY = (wH - canvasH) / 2;
+    if(scale > 1) startX = -(canvasW - wW) / 2; // 모바일: 중앙 시작
+    _tx = Math.min(0, Math.max(wW - canvasW, startX));
+    _ty = Math.min(0, Math.max(wH - canvasH, startY));
+    canvas.style.transform = 'translate(' + _tx + 'px,' + _ty + 'px)';
+    _scale = scale;
+    _canvasW = canvasW;
+    _canvasH = canvasH;
+  }
+
+  var _tx = 0, _ty = 0, _scale = 1, _canvasW = 0, _canvasH = 0;
+
+  function animateMarkers(){
+    var markers = document.querySelectorAll('#mapCanvas .map-marker');
+    markers.forEach(function(m){ m.classList.remove('visible'); });
+    markers.forEach(function(m, i){
+      setTimeout(function(){ m.classList.add('visible'); }, 80 + i * 60);
+    });
+  }
+
+  function setupDrag(wrap, canvas){
+    var dragging = false;
+    var startX, startY, startTx, startTy;
+    var lastTx, lastTy;
+
+    function clamp(tx, ty){
+      var wW = wrap.offsetWidth;
+      var wH = wrap.offsetHeight;
+      var minX = Math.min(0, wW - _canvasW);
+      var minY = Math.min(0, wH - _canvasH);
+      return [
+        Math.min(0, Math.max(minX, tx)),
+        Math.min(0, Math.max(minY, ty))
+      ];
+    }
+
+    // 마우스
+    wrap.addEventListener('mousedown', function(e){
+      dragging = true;
+      startX = e.clientX; startY = e.clientY;
+      startTx = _tx; startTy = _ty;
+      canvas.style.transition = 'none';
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', function(e){
+      if(!dragging) return;
+      var dx = e.clientX - startX;
+      var dy = e.clientY - startY;
+      var c = clamp(startTx + dx, startTy + dy);
+      _tx = c[0]; _ty = c[1];
+      canvas.style.transform = 'translate(' + _tx + 'px,' + _ty + 'px)';
+    });
+    window.addEventListener('mouseup', function(){
+      dragging = false;
+      canvas.style.transition = '';
+    });
+
+    // 터치
+    var touchStartX, touchStartY, touchStartTx, touchStartTy;
+    wrap.addEventListener('touchstart', function(e){
+      if(e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTx = _tx;
+      touchStartTy = _ty;
+      canvas.style.transition = 'none';
+    }, {passive:true});
+    wrap.addEventListener('touchmove', function(e){
+      if(e.touches.length !== 1) return;
+      var dx = e.touches[0].clientX - touchStartX;
+      var dy = e.touches[0].clientY - touchStartY;
+      var c = clamp(touchStartTx + dx, touchStartTy + dy);
+      _tx = c[0]; _ty = c[1];
+      canvas.style.transform = 'translate(' + _tx + 'px,' + _ty + 'px)';
+      e.preventDefault();
+    }, {passive:false});
+    wrap.addEventListener('touchend', function(){
+      canvas.style.transition = '';
+    }, {passive:true});
+  }
+
+  // popstate 연동
+  document.addEventListener('DOMContentLoaded', function(){
+    var origPopstate = window.onpopstate;
+  });
+})();
+
+</script>
+</body>
+</html>
