@@ -2228,7 +2228,7 @@ function renderHeroSlides(specials){
   const heroItems=[];
   // 스페셜 항목에서 이미지 있는 것
   (specials||[]).forEach((s,i)=>{
-    const img=s.IMAGE_URL||(s.IMG_URL)||('https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/'+(i+1)+'/1.jpg');
+    const img=s.IMAGE_URL||(s.IMG_URL)||('https://gonylab-image.com/cdn-cgi/image/width=1200,format=auto,quality=85/thebgyeong/special/'+(i+1)+'/1.jpg');
     heroItems.push({img,title:s.TITLE_KR||'',sub:s.TITLE_EN||'',spIdx:i});
   });
   // 최대 6개
