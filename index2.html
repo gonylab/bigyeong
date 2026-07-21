@@ -2692,8 +2692,8 @@ function openRoomBS(k){
   document.getElementById('rbsPrev').onclick=()=>{if(rbsIdx2>0){rbsIdx2--;updateRbs();}};
   document.getElementById('rbsNext').onclick=()=>{if(rbsIdx2<rbsTotal2-1){rbsIdx2++;updateRbs();}};
   const sl=document.getElementById('rbsSlides');let tx2=0;
-  sl.addEventListener('touchstart',e=>{tx2=e.touches[0].clientX;},{passive:true});
-  sl.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx2;if(dx<-40&&rbsIdx2<rbsTotal2-1){rbsIdx2++;updateRbs();}else if(dx>40&&rbsIdx2>0){rbsIdx2--;updateRbs();}},{passive:true});
+  sl.ontouchstart=e=>{tx2=e.touches[0].clientX;};
+  sl.ontouchend=e=>{const dx=e.changedTouches[0].clientX-tx2;if(dx<-40&&rbsIdx2<rbsTotal2-1){rbsIdx2++;updateRbs();}else if(dx>40&&rbsIdx2>0){rbsIdx2--;updateRbs();}};
   document.getElementById('rbsDim').classList.add('on');
   document.getElementById('rbsSheet').classList.add('on');
   document.body.style.overflow='hidden';
