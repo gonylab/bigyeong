@@ -1217,6 +1217,37 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
 .travel-item-distance svg{
   width:14px;height:14px;flex-shrink:0;
 }
+
+/* ===== 머무는 공간 BOTTOM SHEET ===== */
+.sbs-dim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1100;opacity:0;visibility:hidden;transition:.3s}
+.sbs-dim.on{opacity:1;visibility:visible}
+.sbs-sheet{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
+  width:100%;max-width:430px;background:#fff;z-index:1150;
+  border-radius:16px 16px 0 0;max-height:92vh;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  transition:transform .4s cubic-bezier(.25,.46,.45,.94);
+  padding-bottom:48px;
+}
+.sbs-sheet.on{transform:translateX(-50%) translateY(0)}
+.sbs-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:12px auto 0;cursor:pointer;padding:12px 40px;box-sizing:content-box;background-clip:content-box}
+.sbs-head{padding:4px 16px 12px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #f0ece4}
+.sbs-head-left{}
+.sbs-cat{font-size:11px;font-weight:500;color:#b4915a;letter-spacing:.08em;margin-bottom:4px}
+.sbs-ttl{font-size:21px;font-weight:700;color:#1a1a1a;letter-spacing:-.02em;line-height:1.3}
+.sbs-x{width:32px;height:32px;border-radius:50%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:2px}
+.sbs-x svg{width:13px;height:13px;stroke:#555;fill:none;stroke-width:1.5}
+/* 이미지 세로 스크롤 */
+.sbs-imgs{display:flex;flex-direction:column;gap:3px;margin:0}
+.sbs-img-item{width:100%;overflow:hidden;background:#e8e4dc}
+.sbs-img-item img{width:100%;display:block;object-fit:cover}
+.sbs-img-item:first-child img{aspect-ratio:4/3}
+.sbs-img-item:not(:first-child) img{aspect-ratio:4/3}
+/* 텍스트 */
+.sbs-body{padding:16px 16px 0}
+.sbs-desc{font-size:13px;font-weight:300;color:#555;line-height:1.85}
+/* CTA */
+.sbs-cta{display:flex;align-items:center;justify-content:center;gap:8px;margin:20px 16px 0;padding:15px;background:#1a1a1a;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;border:none;width:calc(100% - 32px)}
 </style>
 </head>
 <body>
@@ -1265,8 +1296,8 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
       <div class="menu-rooms-inner" id="menuRoomsInner"></div>
     </div>
     <div class="menu-item" id="menuItemSpecial" onclick="openSpecialFromMenu()">
-      <span>스페셜</span>
-      <span class="menu-item-en">SPECIAL</span>
+      <span>머무는 공간</span>
+      <span class="menu-item-en">THE B. GYEONG SPACES</span>
     </div>
     <!-- 스페셜 아코디언 패널 -->
     <div class="menu-sp-panel" id="menuSpPanel">
@@ -1364,8 +1395,8 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
     </button>
   </nav>
   <div class="splo-header">
-    <div class="splo-header-title">스페셜</div>
-    <div class="splo-header-sub">SPECIAL THINGS</div>
+    <div class="splo-header-title">머무는 공간</div>
+    <div class="splo-header-sub">THE B. GYEONG SPACES</div>
   </div>
   <div class="splo-body" id="sploBody"></div>
   <div class="splo-bottom-bar">
@@ -1407,8 +1438,8 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
   </nav>
   <!-- 헤더 -->
   <div class="slo-header">
-    <div class="slo-header-title">스페셜</div>
-    <div class="slo-header-sub">SPECIAL THINGS</div>
+    <div class="slo-header-title">머무는 공간</div>
+    <div class="slo-header-sub">THE B. GYEONG SPACES</div>
   </div>
   <!-- 목차 -->
   <div class="slo-toc" id="sloToc"></div>
@@ -1656,6 +1687,23 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
   </div>
 </div>
 
+<!-- 머무는 공간 BOTTOM SHEET -->
+<div class="sbs-dim" id="sbsDim" onclick="closeSpaceBS()"></div>
+<div class="sbs-sheet" id="sbsSheet">
+  <div class="sbs-handle" id="sbsHandle" onclick="closeSpaceBS()"></div>
+  <div class="sbs-head">
+    <div class="sbs-head-left">
+      <div class="sbs-cat" id="sbsCat"></div>
+      <div class="sbs-ttl" id="sbsTtl"></div>
+    </div>
+    <div class="sbs-x" onclick="closeSpaceBS()"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+  </div>
+  <div class="sbs-imgs" id="sbsImgs"></div>
+  <div class="sbs-body">
+    <div class="sbs-desc" id="sbsDesc"></div>
+  </div>
+  <button class="sbs-cta" onclick="window.open('https://booking.naver.com/booking/13/bizes/1151531','_blank')">예약하기 →</button>
+</div>
 <!-- ROOM BOTTOM SHEET -->
 <div class="rbs-dim" id="rbsDim" onclick="closeRoomBS()"></div>
 <div class="rbs-sheet" id="rbsSheet">
@@ -1722,6 +1770,17 @@ function enterMain(){
 
 // 모바일 뒤로가기(popstate) 처리
 window.addEventListener('popstate',function(e){
+  // 머무는 공간 BS 닫기
+  if(document.getElementById('sbsSheet')?.classList.contains('on')){
+    document.getElementById('sbsDim').classList.remove('on');
+    document.getElementById('sbsSheet').classList.remove('on');
+    if(document.getElementById('spListOverlay')?.classList.contains('open')){
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return;
+  }
   // 바텀시트가 열려있으면 바텀시트만 닫고 객실목록 유지 (pushState 없음)
   if(document.getElementById('rbsSheet')?.classList.contains('on')){
     document.getElementById('rbsDim').classList.remove('on');
@@ -2281,7 +2340,7 @@ function renderSpecialOverlay(specials){
           </div>`
         :`<div class="splo-card-img-wrap"><img src="${imgs[0]}" alt="${name}" loading="lazy"/></div>`;
       return `
-        <div class="splo-card-item" onclick="openSpecialDetail(${i})">
+        <div class="splo-card-item" onclick="openSpaceBS(${i})">
           ${slideHtml}
           <div class="splo-card-meta">
             <div class="splo-card-name">${name}</div>
@@ -2674,6 +2733,72 @@ function updateRbs(){
   document.getElementById('rbsSlides').style.transform=`translateX(-${rbsIdx2*100}%)`;
   document.getElementById('rbsCounter').textContent=`${rbsIdx2+1} / ${rbsTotal2}`;
   document.querySelectorAll('.rbs-dot').forEach((d,i)=>d.classList.toggle('on',i===rbsIdx2));
+}
+// ── 머무는 공간 Bottom Sheet ──
+var _sbsFromList = false;
+function openSpaceBS(idx){
+  var specials = (_apiData && _apiData.n9) ? _apiData.n9 : [];
+  var s = specials[idx];
+  if(!s) return;
+  var spImgCounts = [10,6,7,5,4,7,1,4,3];
+  var cnt = spImgCounts[idx] || 1;
+  var base = 'https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/' + (idx+1) + '/';
+  var imgs = Array.from({length:cnt}, function(_,k){ return base + (k+1) + '.jpg'; });
+
+  document.getElementById('sbsCat').textContent = s.TITLE_EN || '';
+  document.getElementById('sbsTtl').textContent = s.TITLE_KR || '';
+
+  // 이미지 세로 나열
+  document.getElementById('sbsImgs').innerHTML = imgs.map(function(src){
+    return '<div class="sbs-img-item"><img src="' + src + '" alt="' + (s.TITLE_KR||'') + '" loading="lazy"/></div>';
+  }).join('');
+
+  // 설명
+  var descParts = [s.CONTENT, s.CONTENT1, s.CONTENT2, s.CONTENT3, s.CONTENT4].filter(Boolean);
+  document.getElementById('sbsDesc').innerHTML = descParts.join('<br><br>') || '';
+
+  // 열기
+  _sbsFromList = document.getElementById('spListOverlay').classList.contains('open');
+  document.getElementById('sbsDim').classList.add('on');
+  var sheet = document.getElementById('sbsSheet');
+  sheet.classList.add('on');
+  sheet.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  history.pushState({page:'main', layer:'spaceBS'}, '', ' ');
+
+  // drag-to-close
+  var handle = document.getElementById('sbsHandle');
+  var dragStartY = 0, dragCurY = 0, isDragging = false;
+  handle.ontouchstart = function(e){
+    dragStartY = e.touches[0].clientY;
+    isDragging = true;
+    sheet.style.transition = 'none';
+  };
+  handle.ontouchmove = function(e){
+    if(!isDragging) return;
+    dragCurY = e.touches[0].clientY;
+    var dy = dragCurY - dragStartY;
+    if(dy > 0) sheet.style.transform = 'translateX(-50%) translateY(' + dy + 'px)';
+  };
+  handle.ontouchend = function(){
+    isDragging = false;
+    sheet.style.transition = '';
+    if(dragCurY - dragStartY > 80){
+      closeSpaceBS();
+    } else {
+      sheet.style.transform = '';
+    }
+    dragStartY = 0; dragCurY = 0;
+  };
+}
+function closeSpaceBS(){
+  document.getElementById('sbsDim').classList.remove('on');
+  document.getElementById('sbsSheet').classList.remove('on');
+  if(_sbsFromList){
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
 }
 function openRoomBS(k){
   const d=rbsData[k];if(!d)return;
