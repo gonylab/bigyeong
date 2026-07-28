@@ -709,7 +709,7 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
   max-height:80vh;overflow-y:auto;
 }
 .bs-sheet.open{transform:translateX(-50%) translateY(0)}
-.bs-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:12px auto 0}
+.bs-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:12px auto 0;cursor:pointer;padding:12px 40px;box-sizing:content-box;background-clip:content-box}
 .bs-img{width:100%;aspect-ratio:16/9;object-fit:cover;background:#2a2a2a}
 .bs-body{padding:20px}
 .bs-cat{font-size:10px;font-weight:500;color:#b4915a;letter-spacing:1.5px;margin-bottom:6px}
@@ -1100,6 +1100,24 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
 .slo-slides-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px;}
 .slo-sdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;transition:all .25s;}
 .slo-sdot.active{width:18px;border-radius:3px;background:#fff;}
+/* 스페셜 이미지 그리드 */
+.slo-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:14px;border-radius:12px;overflow:hidden;}
+.slo-img-grid-full{grid-column:1/-1;}
+.slo-img-grid-item{overflow:hidden;background:#e0dbd2;cursor:pointer;}
+.slo-img-grid-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;transition:opacity .15s;}
+.slo-img-grid-full .slo-img-grid-item img{aspect-ratio:4/3;}
+.slo-img-grid-single .slo-img-grid-item img{aspect-ratio:4/3;}
+/* 스페셜 라이트박스 */
+.slo-lightbox{display:none;position:fixed;inset:0;z-index:3500;background:rgba(0,0,0,.97);flex-direction:column;align-items:center;justify-content:center;}
+.slo-lightbox.open{display:flex;}
+.slo-lb-close{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;}
+.slo-lb-close svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none;}
+.slo-lb-img-wrap{width:100%;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:60px 0 50px;}
+.slo-lb-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;user-select:none;-webkit-user-drag:none;transition:opacity .12s ease;}
+.slo-lb-prev,.slo-lb-next{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.slo-lb-prev{left:10px;}.slo-lb-next{right:10px;}
+.slo-lb-prev svg,.slo-lb-next svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none;}
+.slo-lb-counter{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:rgba(255,255,255,.7);font-size:13px;letter-spacing:.05em;}
 .slo-item-cat{
   font-size:11px;font-weight:500;color:#b4915a;
   letter-spacing:.08em;margin-bottom:6px;
@@ -1265,8 +1283,8 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
       <div class="menu-rooms-inner" id="menuRoomsInner"></div>
     </div>
     <div class="menu-item" id="menuItemSpecial" onclick="openSpecialFromMenu()">
-      <span>스페셜</span>
-      <span class="menu-item-en">SPECIAL</span>
+      <span>머무는 공간</span>
+      <span class="menu-item-en">THE B. GYEONG SPACES</span>
     </div>
     <!-- 스페셜 아코디언 패널 -->
     <div class="menu-sp-panel" id="menuSpPanel">
@@ -1364,8 +1382,8 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
     </button>
   </nav>
   <div class="splo-header">
-    <div class="splo-header-title">스페셜</div>
-    <div class="splo-header-sub">SPECIAL THINGS</div>
+    <div class="splo-header-title">머무는 공간</div>
+    <div class="splo-header-sub">THE B. GYEONG SPACES</div>
   </div>
   <div class="splo-body" id="sploBody"></div>
   <div class="splo-bottom-bar">
@@ -1407,8 +1425,8 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
   </nav>
   <!-- 헤더 -->
   <div class="slo-header">
-    <div class="slo-header-title">스페셜</div>
-    <div class="slo-header-sub">SPECIAL THINGS</div>
+    <div class="slo-header-title">머무는 공간</div>
+    <div class="slo-header-sub">THE B. GYEONG SPACES</div>
   </div>
   <!-- 목차 -->
   <div class="slo-toc" id="sloToc"></div>
@@ -1479,6 +1497,22 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
   <div class="glb-counter" id="glbCounter"></div>
 </div>
 
+<!-- SPECIAL LIGHTBOX -->
+<div class="slo-lightbox" id="sloLightbox">
+  <button class="slo-lb-close" onclick="closeSloLightbox()">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <button class="slo-lb-prev" onclick="sloLightboxMove(-1)">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="slo-lb-img-wrap">
+    <img class="slo-lb-img" id="sloLbImg" src="" alt="special"/>
+  </div>
+  <button class="slo-lb-next" onclick="sloLightboxMove(1)">
+    <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <div class="slo-lb-counter" id="sloLbCounter"></div>
+</div>
 <!-- TRAVEL OVERLAY -->
 <div class="special-overlay" id="travelOverlay">
   <!-- GNB -->
@@ -1659,7 +1693,7 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
 <!-- ROOM BOTTOM SHEET -->
 <div class="rbs-dim" id="rbsDim" onclick="closeRoomBS()"></div>
 <div class="rbs-sheet" id="rbsSheet">
-  <div class="bs-handle"></div>
+  <div class="bs-handle" id="rbsHandle" onclick="closeRoomBS()"></div>
   <div class="rbs-head">
     <div>
       <div class="rbs-ttl" id="rbsTtl"></div>
@@ -2373,13 +2407,15 @@ function renderSpecialOverlay(specials){
     const descParts=[s.CONTENT,s.CONTENT1,s.CONTENT2,s.CONTENT3,s.CONTENT4].filter(Boolean);
     const desc=descParts.join('<br><br>');
     const tags=[s.TITLE_KR].filter(Boolean);
-    // 이미지 슬라이드 HTML 생성
-    const imgSlideHtml=spImgs.length>1
-      ? `<div class="slo-item-slides" id="slo-slides-${i}">
-          <div class="slo-slides-track" id="slo-track-${i}">${spImgs.map((src,si)=>`<div class="slo-slide"><img src="${src}" alt="${title}" loading="lazy"/></div>`).join('')}</div>
-          <div class="slo-slides-dots">${spImgs.map((_,si)=>`<span class="slo-sdot${si===0?' active':''}" onclick="slideSloTo(${i},${si})"></span>`).join('')}</div>
-        </div>`
-      : `<div class="slo-item-img"><img src="${img}" alt="${title}" loading="lazy"/></div>`;
+    // 이미지 Grid HTML 생성
+    const imgSlideHtml=(()=>{
+      if(spImgs.length===1){
+        return `<div class="slo-img-grid slo-grid-single"><div class="slo-img-grid-full"><div class="slo-img-grid-item" onclick="openSloLightbox(${i},0)"><img src="${spImgs[0]}" alt="${title}" loading="lazy"/></div></div></div>`;
+      }
+      const firstImg=`<div class="slo-img-grid-full"><div class="slo-img-grid-item" onclick="openSloLightbox(${i},0)"><img src="${spImgs[0]}" alt="${title}" loading="lazy"/></div></div>`;
+      const restImgs=spImgs.slice(1).map((src,ri)=>`<div class="slo-img-grid-item" onclick="openSloLightbox(${i},${ri+1})"><img src="${src}" alt="${title}" loading="lazy"/></div>`).join('');
+      return `<div class="slo-img-grid" data-spidx="${i}" data-imgs='${JSON.stringify(spImgs)}'>${firstImg}${restImgs}</div>`;
+    })();
     return `
       <div class="slo-item" id="${id}">
         ${imgSlideHtml}
@@ -2391,45 +2427,8 @@ function renderSpecialOverlay(specials){
       <div class="slo-divider"></div>
     `;
   }).join('');
-
-  // 터치 스와이프 이벤트 등록
-  body.querySelectorAll('.slo-item-slides').forEach(function(el){
-    var track=el.querySelector('.slo-slides-track');
-    if(!track)return;
-    var spIdx=parseInt(el.id.replace('slo-slides-',''));
-    var total=el.querySelectorAll('.slo-slide').length;
-    var sx=0,sy=0,locked=null,startOffset=0;
-
-    el.addEventListener('touchstart',function(e){
-      var t=e.touches[0];
-      sx=t.clientX; sy=t.clientY; locked=null;
-      startOffset=parseInt(track.dataset.cur||'0')*el.offsetWidth;
-      track.style.transition='none';
-    },{passive:true});
-
-    el.addEventListener('touchmove',function(e){
-      var t=e.touches[0];
-      var dx=t.clientX-sx, dy=t.clientY-sy;
-      if(locked===null) locked=Math.abs(dx)>Math.abs(dy)?'h':'v';
-      if(locked==='h'){
-        e.preventDefault();
-        track.style.transform='translateX(-'+(startOffset-dx)+'px)';
-      }
-    },{passive:false});
-
-    el.addEventListener('touchend',function(e){
-      var dx=e.changedTouches[0].clientX-sx;
-      track.style.transition='';
-      var cur=parseInt(track.dataset.cur||'0');
-      if(locked==='h'){
-        if(dx<-40&&cur<total-1) slideSloTo(spIdx,cur+1);
-        else if(dx>40&&cur>0) slideSloTo(spIdx,cur-1);
-        else slideSloTo(spIdx,cur);
-      }
-      locked=null;
-    },{passive:true});
-  });
 }
+
 
 // ── 주변여행지 오버레이 렌더링 (n=10) ──
 function renderTravelOverlay(travels){
@@ -2698,6 +2697,31 @@ function openRoomBS(k){
   document.getElementById('rbsSheet').classList.add('on');
   document.body.style.overflow='hidden';
   history.pushState({page:'main',layer:'roomBS'},'',' ');
+  // drag-to-close 핸들
+  var sheet=document.getElementById('rbsSheet');
+  var handle=document.getElementById('rbsHandle');
+  var dragStartY=0,dragCurY=0,isDraggingSheet=false;
+  handle.ontouchstart=function(e){
+    dragStartY=e.touches[0].clientY;
+    isDraggingSheet=true;
+    sheet.style.transition='none';
+  };
+  handle.ontouchmove=function(e){
+    if(!isDraggingSheet)return;
+    dragCurY=e.touches[0].clientY;
+    var dy=dragCurY-dragStartY;
+    if(dy>0) sheet.style.transform='translateX(-50%) translateY('+dy+'px)';
+  };
+  handle.ontouchend=function(){
+    isDraggingSheet=false;
+    sheet.style.transition='';
+    if(dragCurY-dragStartY>80){
+      closeRoomBS();
+    } else {
+      sheet.style.transform='';
+    }
+    dragStartY=0;dragCurY=0;
+  };
 }
 function closeRoomBS(){
   document.getElementById('rbsDim').classList.remove('on');
@@ -3058,6 +3082,55 @@ function sploSlideTo(spIdx,slideIdx){
   }
   slidesEl.dataset.cur=String(slideIdx);
 }
+// ── 스페셜 라이트박스 ──
+(function(){
+  var _sloLbImgs=[];
+  var _sloLbCur=0;
+  var _sloLbTouchX=0;
+  window.openSloLightbox=function(spIdx,startIdx){
+    // 해당 Grid에서 이미지 배열 가져오기
+    var grid=document.querySelector('.slo-img-grid[data-spidx="'+spIdx+'"]');
+    if(grid&&grid.dataset.imgs){
+      try{_sloLbImgs=JSON.parse(grid.dataset.imgs);}catch(e){_sloLbImgs=[];}
+    } else {
+      // single 이미지
+      var singleImg=document.querySelector('.slo-img-grid.slo-grid-single .slo-img-grid-item img');
+      _sloLbImgs=singleImg?[singleImg.src]:[];
+    }
+    if(!_sloLbImgs.length) return;
+    _sloLbCur=startIdx||0;
+    var img=document.getElementById('sloLbImg');
+    var lb=document.getElementById('sloLightbox');
+    img.src=_sloLbImgs[_sloLbCur];
+    document.getElementById('sloLbCounter').textContent=(_sloLbCur+1)+' / '+_sloLbImgs.length;
+    lb.classList.add('open');
+    document.body.style.overflow='hidden';
+    lb.addEventListener('touchstart',_sloLbTS,{passive:true});
+    lb.addEventListener('touchend',_sloLbTE,{passive:true});
+  };
+  function _sloLbTS(e){_sloLbTouchX=e.touches[0].clientX;}
+  function _sloLbTE(e){
+    var dx=e.changedTouches[0].clientX-_sloLbTouchX;
+    if(Math.abs(dx)>40) window.sloLightboxMove(dx<0?1:-1);
+  }
+  window.sloLightboxMove=function(dir){
+    _sloLbCur=(_sloLbCur+dir+_sloLbImgs.length)%_sloLbImgs.length;
+    var img=document.getElementById('sloLbImg');
+    img.style.opacity='0';
+    setTimeout(function(){
+      img.src=_sloLbImgs[_sloLbCur];
+      document.getElementById('sloLbCounter').textContent=(_sloLbCur+1)+' / '+_sloLbImgs.length;
+      img.style.opacity='1';
+    },120);
+  };
+  window.closeSloLightbox=function(){
+    var lb=document.getElementById('sloLightbox');
+    lb.classList.remove('open');
+    lb.removeEventListener('touchstart',_sloLbTS);
+    lb.removeEventListener('touchend',_sloLbTE);
+    document.body.style.overflow='hidden';
+  };
+})();
 function slideSloTo(spIdx,slideIdx){
   var container=document.getElementById('slo-slides-'+spIdx);
   var track=document.getElementById('slo-track-'+spIdx);
