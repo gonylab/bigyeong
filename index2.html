@@ -729,6 +729,25 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
 /* ===== 객실 바텀시트 ===== */
 .rbs-dim{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1100;opacity:0;visibility:hidden;transition:.3s}
 .rbs-dim.on{opacity:1;visibility:visible}
+/* ===== FEATURE BOTTOM SHEET ===== */
+.fbs-dim{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1100;opacity:0;visibility:hidden;transition:.3s}
+.fbs-dim.on{opacity:1;visibility:visible}
+.fbs-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:430px;background:#fff;z-index:1150;border-radius:16px 16px 0 0;max-height:92vh;overflow-y:auto;transition:transform .4s cubic-bezier(.25,.46,.45,.94);padding-bottom:40px}
+.fbs-sheet.on{transform:translateX(-50%) translateY(0)}
+.fbs-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:12px auto 0;cursor:pointer;padding:12px 40px;box-sizing:content-box;background-clip:content-box}
+.fbs-head{padding:16px 16px 0;display:flex;justify-content:space-between;align-items:flex-start}
+.fbs-cat{font-size:11px;font-weight:500;color:#b4915a;letter-spacing:.08em;margin-bottom:4px}
+.fbs-ttl{font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:-.02em}
+.fbs-x{width:30px;height:30px;border-radius:50%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.fbs-x svg{width:13px;height:13px;stroke:#555;fill:none;stroke-width:1.5}
+.fbs-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin:14px 0 0;overflow:hidden;}
+.fbs-img-grid-full{grid-column:1/-1;}
+.fbs-img-grid-item{overflow:hidden;background:#e0dbd2;cursor:pointer;}
+.fbs-img-grid-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;transition:opacity .15s;}
+.fbs-img-grid-full .fbs-img-grid-item img{aspect-ratio:4/3;}
+.fbs-img-grid-single .fbs-img-grid-item img{aspect-ratio:4/3;}
+.fbs-desc{padding:16px 16px 0;font-size:13px;font-weight:300;color:#555;line-height:1.8}
+.fbs-cta{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 16px 0;padding:15px;background:#1a1a1a;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;border:none;width:calc(100% - 32px)}
 .rbs-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:430px;background:#fff;z-index:1150;border-radius:16px 16px 0 0;max-height:90vh;overflow-y:auto;transition:transform .4s cubic-bezier(.25,.46,.45,.94);padding-bottom:40px}
 .rbs-sheet.on{transform:translateX(-50%) translateY(0)}
 .rbs-head{padding:16px 16px 0;display:flex;justify-content:space-between;align-items:flex-start}
@@ -1690,6 +1709,21 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#f5f1eb;color:#1a1a1a
   </div>
 </div>
 
+<!-- FEATURE BOTTOM SHEET -->
+<div class="fbs-dim" id="fbsDim" onclick="closeFeatureBS()"></div>
+<div class="fbs-sheet" id="fbsSheet">
+  <div class="fbs-handle" id="fbsHandle" onclick="closeFeatureBS()"></div>
+  <div class="fbs-head">
+    <div>
+      <div class="fbs-cat" id="fbsCat"></div>
+      <div class="fbs-ttl" id="fbsTtl"></div>
+    </div>
+    <div class="fbs-x" onclick="closeFeatureBS()"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+  </div>
+  <div class="fbs-img-grid" id="fbsImgGrid"></div>
+  <div class="fbs-desc" id="fbsDesc"></div>
+  <button class="fbs-cta" onclick="window.open('https://booking.naver.com/booking/13/bizes/1151531','_blank')">예약하기 →</button>
+</div>
 <!-- ROOM BOTTOM SHEET -->
 <div class="rbs-dim" id="rbsDim" onclick="closeRoomBS()"></div>
 <div class="rbs-sheet" id="rbsSheet">
@@ -1756,6 +1790,13 @@ function enterMain(){
 
 // 모바일 뒤로가기(popstate) 처리
 window.addEventListener('popstate',function(e){
+  // Feature BS가 열려있으면 닫기
+  if(document.getElementById('fbsSheet')?.classList.contains('on')){
+    document.getElementById('fbsDim').classList.remove('on');
+    document.getElementById('fbsSheet').classList.remove('on');
+    document.body.style.overflow='';
+    return;
+  }
   // 바텀시트가 열려있으면 바텀시트만 닫고 객실목록 유지 (pushState 없음)
   if(document.getElementById('rbsSheet')?.classList.contains('on')){
     document.getElementById('rbsDim').classList.remove('on');
@@ -2283,7 +2324,7 @@ function renderHeroSlides(specials){
       <div class="hero-slide-body">
         <div class="hero-title">${it.title}</div>
         <div class="hero-desc">${it.sub}</div>
-        ${it.spIdx!==undefined?`<button class="hero-btn" onclick="openSpecialDetail(${it.spIdx})">자세히 보기 <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>`:''}
+        ${it.spIdx!==undefined?`<button class="hero-btn" onclick="openFeatureBS(${it.spIdx})">자세히 보기 <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>`:''}
       </div>
     </div>
   `).join('');
@@ -2315,7 +2356,7 @@ function renderSpecialOverlay(specials){
           </div>`
         :`<div class="splo-card-img-wrap"><img src="${imgs[0]}" alt="${name}" loading="lazy"/></div>`;
       return `
-        <div class="splo-card-item" onclick="openSpecialDetail(${i})">
+        <div class="splo-card-item" onclick="openFeatureBS(${i})">
           ${slideHtml}
           <div class="splo-card-meta">
             <div class="splo-card-name">${name}</div>
@@ -2674,6 +2715,100 @@ function updateRbs(){
   document.getElementById('rbsCounter').textContent=`${rbsIdx2+1} / ${rbsTotal2}`;
   document.querySelectorAll('.rbs-dot').forEach((d,i)=>d.classList.toggle('on',i===rbsIdx2));
 }
+// ── Feature(머무는 공간) Bottom Sheet ──
+var _fbsLbImgs=[];
+var _fbsLbCur=0;
+var _fbsLbTouchX=0;
+function openFeatureBS(idx){
+  var specials=(_apiData&&_apiData.n9)?_apiData.n9:[];
+  var s=specials[idx];
+  if(!s)return;
+  var spImgCounts=[10,6,7,5,4,7,1,4,3];
+  var cnt=spImgCounts[idx]||1;
+  var base='https://gonylab-image.com/cdn-cgi/image/width=800,format=auto,quality=85/thebgyeong/special/'+(idx+1)+'/';
+  var imgs=Array.from({length:cnt},function(_,k){return base+(k+1)+'.jpg';});
+  _fbsLbImgs=imgs;
+  document.getElementById('fbsCat').textContent=s.TITLE_EN||'';
+  document.getElementById('fbsTtl').textContent=s.TITLE_KR||'';
+  // 설명
+  var descParts=[s.CONTENT,s.CONTENT1,s.CONTENT2,s.CONTENT3,s.CONTENT4].filter(Boolean);
+  document.getElementById('fbsDesc').innerHTML=descParts.join('<br><br>')||'';
+  // 이미지 Grid
+  var grid=document.getElementById('fbsImgGrid');
+  if(imgs.length===1){
+    grid.className='fbs-img-grid fbs-img-grid-single';
+    grid.innerHTML='<div class="fbs-img-grid-full"><div class="fbs-img-grid-item" onclick="openFbsLightbox(0)"><img src="'+imgs[0]+'" alt="'+s.TITLE_KR+'" loading="lazy"/></div></div>';
+  } else {
+    grid.className='fbs-img-grid';
+    var firstImg='<div class="fbs-img-grid-full"><div class="fbs-img-grid-item" onclick="openFbsLightbox(0)"><img src="'+imgs[0]+'" alt="'+s.TITLE_KR+'" loading="lazy"/></div></div>';
+    var restImgs=imgs.slice(1).map(function(src,ri){
+      return '<div class="fbs-img-grid-item" onclick="openFbsLightbox('+(ri+1)+')"><img src="'+src+'" alt="'+s.TITLE_KR+'" loading="lazy"/></div>';
+    }).join('');
+    grid.innerHTML=firstImg+restImgs;
+  }
+  // sheet 열기
+  document.getElementById('fbsDim').classList.add('on');
+  var sheet=document.getElementById('fbsSheet');
+  sheet.classList.add('on');
+  sheet.scrollTop=0;
+  document.body.style.overflow='hidden';
+  history.pushState({page:'main',layer:'featureBS'},'',' ');
+  // drag-to-close
+  var handle=document.getElementById('fbsHandle');
+  var dragStartY=0,dragCurY=0,isDragging=false;
+  handle.ontouchstart=function(e){
+    dragStartY=e.touches[0].clientY;
+    isDragging=true;
+    sheet.style.transition='none';
+  };
+  handle.ontouchmove=function(e){
+    if(!isDragging)return;
+    dragCurY=e.touches[0].clientY;
+    var dy=dragCurY-dragStartY;
+    if(dy>0) sheet.style.transform='translateX(-50%) translateY('+dy+'px)';
+  };
+  handle.ontouchend=function(){
+    isDragging=false;
+    sheet.style.transition='';
+    if(dragCurY-dragStartY>80){
+      closeFeatureBS();
+    } else {
+      sheet.style.transform='';
+    }
+    dragStartY=0;dragCurY=0;
+  };
+}
+function closeFeatureBS(){
+  document.getElementById('fbsDim').classList.remove('on');
+  document.getElementById('fbsSheet').classList.remove('on');
+  document.body.style.overflow='';
+}
+function openFbsLightbox(startIdx){
+  if(!_fbsLbImgs.length)return;
+  _fbsLbCur=startIdx||0;
+  var img=document.getElementById('sloLbImg');
+  var lb=document.getElementById('sloLightbox');
+  img.src=_fbsLbImgs[_fbsLbCur];
+  document.getElementById('sloLbCounter').textContent=(_fbsLbCur+1)+' / '+_fbsLbImgs.length;
+  lb.classList.add('open');
+  document.body.style.overflow='hidden';
+  // 라이트박스 이동 함수 재정의
+  window.sloLightboxMove=function(dir){
+    _fbsLbCur=(_fbsLbCur+dir+_fbsLbImgs.length)%_fbsLbImgs.length;
+    var img2=document.getElementById('sloLbImg');
+    img2.style.opacity='0';
+    setTimeout(function(){
+      img2.src=_fbsLbImgs[_fbsLbCur];
+      document.getElementById('sloLbCounter').textContent=(_fbsLbCur+1)+' / '+_fbsLbImgs.length;
+      img2.style.opacity='1';
+    },120);
+  };
+  window.closeSloLightbox=function(){
+    var lb2=document.getElementById('sloLightbox');
+    lb2.classList.remove('open');
+    document.body.style.overflow='hidden';
+  };
+}
 function openRoomBS(k){
   const d=rbsData[k];if(!d)return;
   document.getElementById('rbsTtl').textContent=d.ttl;
@@ -2845,7 +2980,7 @@ function renderMenuSpecial(){
     const name=s.TITLE_KR||'';
     const en=s.TITLE_EN||'';
     return `
-      <div class="menu-sp-item" onclick="openSpecialDetailFromMenu(${i})">
+      <div class="menu-sp-item" onclick="openFeatureBS(${i})">
         <div class="menu-sp-thumb"><img src="${img}" alt="${name}" loading="lazy"/></div>
         <div class="menu-sp-info">
           <div class="menu-sp-name">${name}</div>
