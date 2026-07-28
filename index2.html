@@ -1790,11 +1790,15 @@ function enterMain(){
 
 // 모바일 뒤로가기(popstate) 처리
 window.addEventListener('popstate',function(e){
-  // Feature BS가 열려있으면 닫기
+  // Feature BS가 열려있으면 닫기 (spListOverlay 복원)
   if(document.getElementById('fbsSheet')?.classList.contains('on')){
     document.getElementById('fbsDim').classList.remove('on');
     document.getElementById('fbsSheet').classList.remove('on');
-    document.body.style.overflow='';
+    if(document.getElementById('spListOverlay')?.classList.contains('open')){
+      document.body.style.overflow='hidden';
+    } else {
+      document.body.style.overflow='';
+    }
     return;
   }
   // 바텀시트가 열려있으면 바텀시트만 닫고 객실목록 유지 (pushState 없음)
@@ -2324,7 +2328,7 @@ function renderHeroSlides(specials){
       <div class="hero-slide-body">
         <div class="hero-title">${it.title}</div>
         <div class="hero-desc">${it.sub}</div>
-        ${it.spIdx!==undefined?`<button class="hero-btn" onclick="openFeatureBS(${it.spIdx})">자세히 보기 <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>`:''}
+        ${it.spIdx!==undefined?`<button class="hero-btn" onclick="openSpecialDetail(${it.spIdx})">자세히 보기 <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>`:''}
       </div>
     </div>
   `).join('');
@@ -2781,7 +2785,12 @@ function openFeatureBS(idx){
 function closeFeatureBS(){
   document.getElementById('fbsDim').classList.remove('on');
   document.getElementById('fbsSheet').classList.remove('on');
-  document.body.style.overflow='';
+  // spListOverlay가 열려있으면 스크롤 유지
+  if(document.getElementById('spListOverlay')?.classList.contains('open')){
+    document.body.style.overflow='hidden';
+  } else {
+    document.body.style.overflow='';
+  }
 }
 function openFbsLightbox(startIdx){
   if(!_fbsLbImgs.length)return;
@@ -2980,7 +2989,7 @@ function renderMenuSpecial(){
     const name=s.TITLE_KR||'';
     const en=s.TITLE_EN||'';
     return `
-      <div class="menu-sp-item" onclick="openFeatureBS(${i})">
+      <div class="menu-sp-item" onclick="openSpecialDetailFromMenu(${i})">
         <div class="menu-sp-thumb"><img src="${img}" alt="${name}" loading="lazy"/></div>
         <div class="menu-sp-info">
           <div class="menu-sp-name">${name}</div>
